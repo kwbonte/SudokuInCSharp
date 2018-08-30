@@ -10,44 +10,19 @@ namespace ConsoleSudoku
     {
         public Board(string filename)
         {
-            /*_board = new char[,]
-                {
-                    { '1', '2', '3', '4', '5', '6', '7', '8', '9'},
-                    { 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'},
-                    { 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'},
-                    { 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'},
-                    { 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'},
-                    { 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'},
-                    { 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'},
-                    { 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'},
-                    { 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'},
-                };
-            _board = new Square[,]
-            {
-                { new Square('k',10), new Square('k',10), new Square('k',10), new Square('2',1), new Square('6',1), new Square('k',1),new Square('7',1), new Square('k',10), new Square('1',1)},
-                { new Square('6',1), new Square('8',1), new Square('k',10), new Square('k',10), new Square('7',1), new Square('k',10),new Square('k',10), new Square('9',1), new Square('k',10)},
-                { new Square('1',1), new Square('9',1), new Square('k',10), new Square('k',10), new Square('k',10), new Square('4',1),new Square('5',1), new Square('k',10), new Square('k',10)},
-                { new Square('8',1), new Square('2',1), new Square('k',10), new Square('1',1), new Square('k',10), new Square('k',10),new Square('k',10), new Square('4',1), new Square('k',10)},
-                { new Square('k',10), new Square('k',10), new Square('4',1), new Square('6',1), new Square('k',10), new Square('2',1),new Square('9',10), new Square('k',10), new Square('k',10)},
-                { new Square('k',10), new Square('5',1), new Square('k',10), new Square('k',10), new Square('k',10), new Square('3',1),new Square('k',1), new Square('2',1), new Square('8',1)},
-                { new Square('k',10), new Square('k',10), new Square('9',1), new Square('3',1), new Square('k',10), new Square('k',10),new Square('k',10), new Square('7',1), new Square('4',1)},
-                { new Square('k',10), new Square('4',1), new Square('k',10), new Square('k',10), new Square('5',1), new Square('k',10),new Square('k',10), new Square('3',1), new Square('6',1)},
-                { new Square('7',1), new Square('k',10), new Square('3',1), new Square('k',10), new Square('1',1), new Square('8',1),new Square('k',10), new Square('k',10), new Square('k',10)},
-            };//*/
+            // Assigning memory spaces to the global variables
             _board = new Square[9, 9];
-            ReadInSudokuBoard(filename);
+            _boxes = new Box[] { new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box() };
 
-            _boxes = new Box[] { new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box()};
-            AssignBoxIds();
-
-            //PrintBoxContents();
-            //BoxContentLoading();
-            //PrintBoxContents();
-            //TestingIsPossibleDoubleZero();
-            //TestingIsPossible();
-
-            //Console.WriteLine("Attempting to fill the board");
-            //fillInBoad();
+            // Fillin in the sudoku board from the file
+            try
+            {
+                ReadInSudokuBoard(filename);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         // TODO: come up with a way to create input for some beginner, medium and expert puzzles,
@@ -63,8 +38,6 @@ namespace ConsoleSudoku
                 // attempt to fiddle with multi level depth algorithms
         public void ReadInSudokuBoard(string filename)
         {
-            try
-            {
                 string[] lines = System.IO.File.ReadAllLines(filename);
                 int row = 0;
                 foreach (var line in lines)
@@ -85,14 +58,10 @@ namespace ConsoleSudoku
                         Console.WriteLine();
                     }
                 }
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+                // Adding in the box Ids
+                AssignBoxIds();
 
         }
-
 
         public void fillInBoard()
         {
@@ -101,32 +70,38 @@ namespace ConsoleSudoku
             while (!Done() && changed)
             {
                 changed = false;
-                for (int i = 0; i < 9; i++)
-                {
-                    for (int j = 0; j < 9; j++)
-                    {
-                        if(_board[i,j].Val == 'k')
-                        {
-                            List<char> options = AvailableOptions(i, j);
-                            if(options.Count()==1)
-                            {
-                                Console.WriteLine("Making changes to "+i+", "+j);
-                                _board[i, j].Val = options[0];
-                                _board[i, j].Conf = 2;
-                                changed = true;
-                                moveCounter++;
-                            }
-                        }
-                    }
-                }
+                changed = PassThroughAndFillOutTheCertainSquares(changed);
                 PrintBoard();
 
             }
-            if (Done())
+            /*if (Done())
                 Console.WriteLine("Board completed in " + moveCounter + " moves.");
             else
-                Console.WriteLine("This failed to be completed after " + moveCounter + " moves.");
+                Console.WriteLine("This failed to be completed after " + moveCounter + " moves.");*/
         }
+        public Boolean PassThroughAndFillOutTheCertainSquares(Boolean changed)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    if (_board[i, j].Val == 'k')
+                    {
+                        List<char> options = AvailableOptions(i, j);
+                        if (options.Count() == 1)
+                        {
+                            //Console.WriteLine("Making changes to " + i + ", " + j);
+                            _board[i, j].Val = options[0];
+                            _board[i, j].Conf = 2;
+                            changed = true;
+                            //moveCounter++;
+                        }
+                    }
+                }
+            }
+            return changed;
+        }
+
         public List<char> AvailableOptions(int i, int j)
         {
             List<char> options = new List<char>();

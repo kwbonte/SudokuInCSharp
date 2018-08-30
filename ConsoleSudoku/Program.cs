@@ -23,7 +23,7 @@ namespace ConsoleSudoku
             //game_board.fillInBoard();
 
             // render instruction set
-            Board easy1 = new Board("sudoku_input_easy_2.txt");
+            Board easy1 = new Board("sudoku_input_easy_1.txt");
             easy1.PrintBoard();
             easy1.fillInBoard();
 
