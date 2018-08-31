@@ -8,77 +8,74 @@ namespace ConsoleSudoku
 {
     public class Board
     {
+        /// <summary>
+        /// Constructor for the Board class, this establishes the 9x9 Square board, initializes the 9 boxes in for data collections as well
+        /// the boxes are represented as:
+        /// 0 1 2
+        /// 3 4 5
+        /// 6 7 8
+        /// The filename is passed off to the read in function in the try catch block.
+        /// </summary>
+        /// <param name="filename"></param>
         public Board(string filename)
         {
             // Assigning memory spaces to the global variables
             _board = new Square[9, 9];
             _boxes = new Box[] { new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box() };
+            
+            // Fill in the sudoku board from the file
+            try { ReadInSudokuBoard(filename); }
+            catch(Exception ex) { Console.WriteLine(ex.Message); }
 
-            // Fillin in the sudoku board from the file
-            try
-            {
-                ReadInSudokuBoard(filename);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            _previousBoards = new Stack<Square[,]>();
+            addPrevious();
+            Console.WriteLine();
         }
 
-        // TODO: come up with a way to create input for some beginner, medium and expert puzzles,
-            // I am thinking a comma seperated list with semicolons at the end with text files
-            // Get a stream reader together that handles those files
-            // Package up and clean up comment and commit to the gits of hubs
-            // come up with a box id assigning tool that takes the need hardcoding away
-            // Come up with a timing funcitonality and create a row based solver
-                // column based
-                // box based
-                // row+column based
-                // row+column+box based
-                // attempt to fiddle with multi level depth algorithms
+        // Package up and clean up comment and commit to the gits of hubs
+        // Come up with a timing funcitonality and create a row based solver
+        // column based
+        // box based
+        // row+column based
+        // row+column+box based
+        // attempt to fiddle with multi level depth algorithms
+
+        /// <summary>
+        /// Function that reads in a file starting with START and ending with END
+        /// Turns a preformatted file into a sudoku board
+        /// Inside a try block when called thus exceptions handled elsewhere
+        /// </summary>
+        /// <param name="filename"></param>
         public void ReadInSudokuBoard(string filename)
         {
-                string[] lines = System.IO.File.ReadAllLines(filename);
-                int row = 0;
-                foreach (var line in lines)
-                {
-                    if (!line.Equals("START") && !line.Equals("END"))
-                    {
-                        //Console.WriteLine(line);
-                        string[] chars = line.Split(',');
-                        int column = 0;
-                        foreach (string item in chars)
-                        {
-                            Console.Write(item[0] + " ");
-                            _board[row, column] = new Square(item[0]);
-                            column++;
-
-                        }
-                        row++;
-                        Console.WriteLine();
-                    }
-                }
-                // Adding in the box Ids
-                AssignBoxIds();
-
-        }
-
-        public void fillInBoard()
-        {
-            int moveCounter = 0;
-            Boolean changed = true;
-            while (!Done() && changed)
+            string[] lines = System.IO.File.ReadAllLines(filename);
+            int row = 0;
+            foreach (string line in lines)
             {
-                changed = false;
-                changed = PassThroughAndFillOutTheCertainSquares(changed);
-                PrintBoard();
-
+                if (!line.Equals("START") && !line.Equals("END"))
+                {
+                    string[] chars = line.Split(',');
+                    int column = 0;
+                    foreach (string item in chars)
+                    {
+                        _board[row, column] = new Square(item[0]);
+                        column++;
+                    }
+                    row++;
+                }
             }
-            /*if (Done())
-                Console.WriteLine("Board completed in " + moveCounter + " moves.");
-            else
-                Console.WriteLine("This failed to be completed after " + moveCounter + " moves.");*/
+            AssignBoxIds();
         }
+
+
+        /// <summary>
+        /// Takes the current board and from the top left to right, top to bottom iterates through and sees if there 
+        /// is a square with only one possible way to be valued. If that is the case it is changed to that value and
+        /// given a confidence metric of 2, this confidence metric is used to show that it is not the original immutable
+        /// kind of value but we are very certain it is correct.
+        /// </summary>
+        /// <param name="changed"></param>
+        /// <returns> Changed is used to show that we actually modifed the board with this pass through. </returns>
         public Boolean PassThroughAndFillOutTheCertainSquares(Boolean changed)
         {
             for (int i = 0; i < 9; i++)
@@ -90,14 +87,16 @@ namespace ConsoleSudoku
                         List<char> options = AvailableOptions(i, j);
                         if (options.Count() == 1)
                         {
-                            //Console.WriteLine("Making changes to " + i + ", " + j);
                             _board[i, j].Val = options[0];
                             _board[i, j].Conf = 2;
                             changed = true;
-                            //moveCounter++;
                         }
                     }
                 }
+            }
+            if(changed)
+            {
+                addPrevious();
             }
             return changed;
         }
@@ -189,9 +188,43 @@ namespace ConsoleSudoku
             PrintLineOfHyphens();
         }
 
+        public void Undo()
+        {
+            _previousBoards.Pop();
+            Square[,] temp = _previousBoards.Pop();
+            _board = temp;
+        }
+
         public void PrintLineOfHyphens()
         {
             Console.WriteLine("---------------------");
+        }
+
+        public void addPrevious()
+        {
+            Square[,] temp = new Square[9, 9];
+            for(int i =0; i < 9; i++)
+            {
+                for(int j=0; j<9; j++)
+                {
+                    temp[i, j] = _board[i, j];
+                }
+            }
+            _previousBoards.Push(temp);
+        }
+
+        public void AlterCell(int x, int y, char a, int c)
+        {
+            _board[x, y].Val = a;
+            _board[x, y].Conf = c;
+addPrevious();
+        }
+
+        public Boolean UserInputSquare(int x, int y)
+        {
+            if (_board[x, y].Conf != 1)
+                return true;
+            return false;
         }
 
         public Boolean isPossible(int x, int y, char a)
@@ -200,6 +233,7 @@ namespace ConsoleSudoku
             {
                 return false;
             }
+            // loading box content
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
@@ -351,5 +385,6 @@ namespace ConsoleSudoku
         //public char[,] _board;
         public Square[,] _board;
         public Box[] _boxes;
+        public Stack<Square[,]> _previousBoards;
     }
 }
