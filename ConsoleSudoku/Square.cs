@@ -44,5 +44,9 @@ namespace ConsoleSudoku
                 Conf = 10;
             }
         }
+        public override string ToString()
+        {
+            return ""+Val ;
+        }
     }
 }

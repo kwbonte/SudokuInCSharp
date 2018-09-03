@@ -8,6 +8,7 @@ namespace ConsoleSudoku
 {
     class Program
     {
+        private static Board game_board;
         static void Main(string[] args)
         {
             // Start of application
@@ -15,7 +16,7 @@ namespace ConsoleSudoku
             Console.WriteLine("Game Selection Results: " + game_selection);
 
             // Game initialization 
-            Board game_board = new Board(game_selection);
+            game_board = new Board(game_selection);
             game_board.PrintBoard();
             DisplayControls();
 
@@ -41,63 +42,16 @@ namespace ConsoleSudoku
                 {
                     not_exited = false;
                 }
-                //else if (user_input == "undo") // for some reason i am struggling to make this copy correctly
-                //{
-                //    game_board.Undo();
-                //    game_board.PrintBoard();
-                //}
+                else if (user_input == "undo") // for some reason i am struggling to make this copy correctly
+                {
+                    if(game_board.Undo())
+                        game_board.PrintBoard();
+                    else
+                        Console.WriteLine("Undo is not possible at this time.");
+                }
                 else if(user_input.Length==7)
                 {
-                    if(user_input[0]=='[' && user_input[2]==',' &&user_input[4]==']' && user_input[5]==':')
-                    {
-                        // using char properties to figure out if the coords are 0-8 and the input number is 1-9
-                        int row, col;
-                        string xin = "" + user_input[1];
-                        string yin = "" + user_input[3];
-                        if(Int32.TryParse(xin, out row))
-                        {
-                            if(row < 9 && row >-1)
-                            {
-                                if(Int32.TryParse(yin, out col))
-                                {
-                                    if(col < 9 && col > -1)
-                                    {
-                                        if (user_input[6] > 48 && user_input[6] < 58)
-                                        {
-                                            Console.WriteLine("User input " + user_input[6] + " at [" + user_input[1] + ", " + user_input[3] + "]");
-                                            // evaluate if possible
-                                            Boolean WasMovePossible = game_board.isPossible(row,col,user_input[6]);
-                                            if(WasMovePossible)
-                                            {
-                                                Console.WriteLine("This move is possible put it on the board");
-                                                game_board.AlterCell(row, col, user_input[6], 5);
-                                                game_board.PrintBoard();
-                                            }
-                                            else
-                                            {
-                                                Console.WriteLine("This move was NOT possible");
-                                            }
-                                        }
-                                        if(user_input[6] == '_')
-                                        {
-                                            if (game_board.UserInputSquare(row, col))
-                                            {
-                                                Console.WriteLine("Clearing out this decision");
-                                                game_board.AlterCell(row, col, 'k', 10);
-                                                game_board.PrintBoard();
-                                            }
-                                            else
-                                                Console.WriteLine("Cannot clear specified cell.");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("See controls, your syntax is incorrect");
-                    }
+                    UserInput(user_input);
                 }
             }
             if(not_exited)
@@ -140,16 +94,6 @@ namespace ConsoleSudoku
             int selection = ReturnSelection("Input the number of the game you would like to play here: ", list_of_games.Length);
 
             return list_of_games[selection];
-            // render start board
-            //Board game_board = new Board();
-            //game_board.PrintBoard();
-            //game_board.fillInBoard();
-
-            // render instruction set
-            //Board easy1 = new Board("sudoku_input_easy_1.txt");
-            //easy1.PrintBoard();
-            //easy1.fillInBoard();
-
         }
         public static int ReturnSelection(string prompt, int size)
         {
@@ -165,7 +109,60 @@ namespace ConsoleSudoku
             {
                 return ReturnSelection("Please Try agian and only use the keys 0-" + (size-1) + ": ", size);
             }
+        }
 
+        public static void UserInput(string user_input)
+        {
+            if (user_input[0] == '[' && user_input[2] == ',' && user_input[4] == ']' && user_input[5] == ':')
+            {
+                // using char properties to figure out if the coords are 0-8 and the input number is 1-9
+                int row, col;
+                string xin = "" + user_input[1];
+                string yin = "" + user_input[3];
+                if (Int32.TryParse(xin, out row))
+                {
+                    if (row < 9 && row > -1)
+                    {
+                        if (Int32.TryParse(yin, out col))
+                        {
+                            if (col < 9 && col > -1)
+                            {
+                                if (user_input[6] > 48 && user_input[6] < 58)
+                                {
+                                    Console.WriteLine("User input " + user_input[6] + " at [" + user_input[1] + ", " + user_input[3] + "]");
+                                    // evaluate if possible
+                                    Boolean WasMovePossible = game_board.isPossible(row, col, user_input[6]);
+                                    if (WasMovePossible)
+                                    {
+                                        Console.WriteLine("This move is possible put it on the board");
+                                        game_board.AlterCell(row, col, user_input[6], 5);
+                                        game_board.PrintBoard();
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("This move was NOT possible");
+                                    }
+                                }
+                                if (user_input[6] == '_')
+                                {
+                                    if (game_board.UserInputSquare(row, col))
+                                    {
+                                        Console.WriteLine("Clearing out this decision");
+                                        game_board.AlterCell(row, col, 'k', 10);
+                                        game_board.PrintBoard();
+                                    }
+                                    else
+                                        Console.WriteLine("Cannot clear specified cell.");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("See controls, your syntax is incorrect");
+            }
         }
     }
 }

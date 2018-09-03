@@ -67,6 +67,97 @@ namespace ConsoleSudoku
             AssignBoxIds();
         }
 
+        // Assigns the BoxIDs used for evaluating the potential moves
+        public void AssignBoxIds()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    if (i < 3)
+                    {
+                        if (j < 3)
+                            _board[i, j].BoxID = 0;
+                        else if (j < 6)
+                            _board[i, j].BoxID = 1;
+                        else
+                            _board[i, j].BoxID = 2;
+                    }
+                    else if (i < 6)
+                    {
+                        if (j < 3)
+                            _board[i, j].BoxID = 3;
+                        else if (j < 6)
+                            _board[i, j].BoxID = 4;
+                        else
+                            _board[i, j].BoxID = 5;
+                    }
+                    else
+                    {
+                        if (j < 3)
+                            _board[i, j].BoxID = 6;
+                        else if (j < 6)
+                            _board[i, j].BoxID = 7;
+                        else
+                            _board[i, j].BoxID = 8;
+                    }
+                }
+            }
+        }
+
+        // self explanatory
+        public void PrintBoard()
+        {
+            for (int i = 0; i < _board.GetLength(0); i++)
+            {
+                if (i % 3 == 0)
+                {
+                    PrintLineOfHyphens();
+                }
+                for (int j = 0; j < _board.GetLength(1); j++)
+                {
+                    Console.Write('|');
+
+                    if (_board[i, j].Val == 'k')
+                    {
+                        Console.Write(' ');
+                    }
+                    else
+                    {
+                        Console.Write(_board[i, j].Val);
+                    }
+                    if (j % 3 == 2 && j > 0)
+                    {
+                        Console.Write('|');
+                    }
+
+                }
+                Console.WriteLine();
+            }
+            PrintLineOfHyphens();
+        }
+
+        // used for beautifying command line
+        public void PrintLineOfHyphens()
+        {
+            Console.WriteLine("---------------------");
+        }
+
+        // iterates through the board to see if there are any unfilled spaces
+        public Boolean Done()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    if (_board[i, j].Val == 'k')
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
         /// <summary>
         /// Takes the current board and from the top left to right, top to bottom iterates through and sees if there 
@@ -143,98 +234,17 @@ namespace ConsoleSudoku
 
             return options;
         }
-        public Boolean Done()
-        {
-            for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++)
-                {
-                    if (_board[i, j].Val == 'k')
-                        return false;
-                }
-            }
-            return true;
-        }
-
-
-        public void PrintBoard()
-        {
-            for (int i = 0; i < _board.GetLength(0); i++)
-            {
-                if (i % 3 == 0)
-                {
-                    PrintLineOfHyphens();
-                }
-                for (int j = 0; j < _board.GetLength(1); j++)
-                {
-                    Console.Write('|');
-
-                    if (_board[i,j].Val == 'k')
-                    {
-                        Console.Write(' ');
-                    }
-                    else
-                    {
-                        Console.Write(_board[i, j].Val);
-                    }
-                    if(j%3==2 && j>0)
-                    {
-                        Console.Write('|');
-                    }
-                        
-                }
-                Console.WriteLine();
-            }
-            PrintLineOfHyphens();
-        }
-
-        public void Undo()
-        {
-            _previousBoards.Pop();
-            Square[,] temp = _previousBoards.Pop();
-            _board = temp;
-        }
-
-        public void PrintLineOfHyphens()
-        {
-            Console.WriteLine("---------------------");
-        }
-
-        public void addPrevious()
-        {
-            Square[,] temp = new Square[9, 9];
-            for(int i =0; i < 9; i++)
-            {
-                for(int j=0; j<9; j++)
-                {
-                    temp[i, j] = _board[i, j];
-                }
-            }
-            _previousBoards.Push(temp);
-        }
-
-        public void AlterCell(int x, int y, char a, int c)
-        {
-            _board[x, y].Val = a;
-            _board[x, y].Conf = c;
-addPrevious();
-        }
-
-        public Boolean UserInputSquare(int x, int y)
-        {
-            if (_board[x, y].Conf != 1)
-                return true;
-            return false;
-        }
 
         public Boolean isPossible(int x, int y, char a)
         {
-            if(_board[x,y].Val !='k')
+            if (_board[x, y].Val != 'k')
             {
                 return false;
             }
             // loading box content
-            for (int i = 0; i < 9; i++)
+            _boxes = new Box[] { new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box() };
+
+            for (int i = 0; i < 9; i++) //potentially could be optimized
             {
                 for (int j = 0; j < 9; j++)
                 {
@@ -246,38 +256,36 @@ addPrevious();
                 }
             }
             // box checking
-            int box = BoxIdLookUp(x, y);
-            if (!InBox(a, box))
+            if (!InBox(a, BoxIdLookUp(x, y)))
             {
                 return false;
             }
             // row checking
             for (int i = 0; i < 9; i++)
             {
-                if(i != y)
+                if (i != y)
                 {
-                    if(_board[x,i].Val == a)
+                    if (_board[x, i].Val == a)
                     {
                         return false;
                     }
                 }
-                if( i != x)
+                if (i != x)
                 {
-                    if(_board[i,y].Val ==a)
+                    if (_board[i, y].Val == a)
                     {
                         return false;
                     }
                 }
-
             }
             return true;
         }
 
+        // used to improve code readability
         public int BoxIdLookUp(int x, int y)
         {
             return _board[x, y].BoxID;
         }
-
 
         // Verifies if a that char is already in the box
         public Boolean InBox(char a, int bId)
@@ -287,45 +295,65 @@ addPrevious();
             return true;
         }
 
-        // Assigns the BoxIDs used for evaluating the potential moves
-        public void AssignBoxIds()
+        public void AlterCell(int x, int y, char a, int c)
         {
-            for(int i =0; i<9; i++)
-            {
-                for(int j=0; j<9;j++)
-                {
-                    if (i < 3)
-                    {
-                        if(j<3)
-                            _board[i, j].BoxID = 0;
-                        else if(j<6)
-                            _board[i, j].BoxID = 1;
-                        else
-                            _board[i, j].BoxID = 2;
-                    }
-                    else if (i < 6)
-                    {
-                        if (j < 3)
-                            _board[i, j].BoxID = 3;
-                        else if (j < 6)
-                            _board[i, j].BoxID = 4;
-                        else
-                            _board[i, j].BoxID = 5;
-                    }
-                    else
-                    {
-                        if (j < 3)
-                            _board[i, j].BoxID = 6;
-                        else if (j < 6)
-                            _board[i, j].BoxID = 7;
-                        else
-                            _board[i, j].BoxID = 8;
-                    }
-                }
-            }
+            _board[x, y].Val = a;
+            _board[x, y].Conf = c;
+            addPrevious();
+        }
+
+        public Boolean UserInputSquare(int x, int y)
+        {
+            if (_board[x, y].Conf != 1)
+                return true;
+            return false;
         }
 
 
+
+        public Boolean Undo()
+        {
+            if(_previousBoards.Count>1)
+            {
+                _previousBoards.Pop();
+                Square[,] temp = _previousBoards.Pop();
+                for (int i = 0; i < 9; i++)
+                {
+                    for (int j = 0; j < 9; j++)
+                    {
+                        if(temp[i,j].Val == 'k')
+                        {
+                            _board[i, j] = new Square(temp[i, j].Val, 10, temp[i, j].BoxID);
+                        }
+                        else
+                            _board[i, j] = new Square(temp[i, j].Val, temp[i, j].Conf, temp[i, j].BoxID);
+                    }
+                }
+                addPrevious();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        // has to use deep copying cus C# is a snowflake
+        public void addPrevious()
+        {
+            Console.WriteLine("Add previous was called!");
+            Square[,] temp = new Square[9, 9];
+            for(int i =0; i < 9; i++)
+            {
+                for(int j=0; j<9; j++)
+                {
+                    temp[i, j] = new Square(_board[i, j].Val, _board[i,j].Conf, _board[i,j].BoxID);
+                }
+            }
+            _previousBoards.Push(temp);
+        }
+
+        /***Testing funciton section***/
         /// <summary>
         /// Functions used for Testing/ printing in development
         /// </summary>
@@ -356,7 +384,6 @@ addPrevious();
             Console.WriteLine("[0,0] 9: " + isPossible(0, 0, '9'));
 
         }
-
         public void TestingIsPossible()
         {
             Console.WriteLine("Testing everything");
@@ -380,8 +407,24 @@ addPrevious();
                 }
             }
         }
+        public void PrintStack()
+        {
+            while(_previousBoards.Count>0)
+            {
+                Square[,] b = _previousBoards.Pop();
+                Console.WriteLine("Printing a stack");
+                for (int i = 0; i < 9; i++)
+                {
+                    for (int j = 0; j < 9; j++)
+                    {
+                        Console.Write(b[i,j]+" ");
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
 
-
+        // Global Variables
         //public char[,] _board;
         public Square[,] _board;
         public Box[] _boxes;
