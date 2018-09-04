@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleSudoku
 {
@@ -28,7 +26,8 @@ namespace ConsoleSudoku
             catch(Exception ex) { Console.WriteLine(ex.Message); }
 
             _previousBoards = new Stack<Square[,]>();
-            addPrevious();
+            //addPrevious();
+            PotentialMoves = GetNumPossibleMoves();
             Console.WriteLine();
         }
 
@@ -152,6 +151,7 @@ namespace ConsoleSudoku
                 {
                     if (_board[i, j].Val == 'k')
                     {
+                        //Console.WriteLine("ERMAGERHED\n\n\n");
                         return false;
                     }
                 }
@@ -299,7 +299,16 @@ namespace ConsoleSudoku
         {
             _board[x, y].Val = a;
             _board[x, y].Conf = c;
-            addPrevious();
+            MoveCounter = MoveCounter + 1;
+            if (MoveCounter>600)
+            {
+                Console.WriteLine("Cell Alteration. "+MoveCounter+" [" + x + ", " + y + "]: " + a);
+                PrintBoard();
+                Console.WriteLine();
+            }
+
+            if (a == 'k') { BacktrackCounter = BacktrackCounter + 1; }
+            //addPrevious();
         }
 
         public Boolean UserInputSquare(int x, int y)
@@ -341,16 +350,154 @@ namespace ConsoleSudoku
         // has to use deep copying cus C# is a snowflake
         public void addPrevious()
         {
-            Console.WriteLine("Add previous was called!");
+            //Console.WriteLine("Add previous was called!");
             Square[,] temp = new Square[9, 9];
             for(int i =0; i < 9; i++)
             {
                 for(int j=0; j<9; j++)
                 {
-                    temp[i, j] = new Square(_board[i, j].Val, _board[i,j].Conf, _board[i,j].BoxID);
+                    temp[i, j] = new Square(_board[i, j].Val, _board[i,j].Conf, _board[i,j].BoxID, _board[i,j].possibleMoves);
                 }
             }
             _previousBoards.Push(temp);
+        }
+
+        public void GetHint(int row, int col)
+        {
+            Console.WriteLine("Inside the get Hint functionality");
+            List<char> availableOptions = AvailableOptions(row,col);
+
+            foreach(char op in availableOptions)
+            {
+                Console.WriteLine("At ["+row+", "+col+"] there is a probability of "+ ((double)1.0/availableOptions.Count)+" the value is "+op);
+            }
+
+            // build out a hint system that stores this information into a square potentially
+        }
+
+        public int GetNumPossibleMoves()
+        {
+            int totalMoves = 0;
+            _boxes = new Box[] { new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box(), new Box() };
+
+            for (int i = 0; i < 9; i++) //potentially could be optimized
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    if (_board[i, j].Val != 'k')
+                    {
+                        int currBoxID = _board[i, j].BoxID;
+                        _boxes[currBoxID].Contents.Add(_board[i, j].Val);
+                    }
+                }
+            }
+            foreach(Box b in _boxes)
+            {
+                int emptySquares = 9-b.Contents.Count;
+                totalMoves += emptySquares * emptySquares;
+            }
+
+            return totalMoves;
+        }
+
+
+        public Boolean BruteForceSolver(int row, int col, int flag) // int flag is a temp val used to make for back tracking
+        {
+
+            if(flag != 999)
+            {
+                if(row > 8 && col ==0 && Done())
+                {
+                    DisplayStatistics();
+                    return true;
+                }
+                if (_board[row, col].Conf == 1 || _board[row,col].Conf==2) // clear skip over the user input
+                {
+                    if (col < 8)
+                    {
+                        col = col + 1;
+                        return BruteForceSolver(row, col, 0); // 0 flag means nothing is wrong
+                    }
+                    else if (row < 9)
+                    {
+                        row = row + 1;
+                        return BruteForceSolver(row, 0, 0); // 0 flag means nothing is wrong
+                    }
+                }
+                else
+                {
+                    if (_board[row, col].possibleMoves.Count > 0)
+                    {
+                        char option = _board[row, col].possibleMoves.Dequeue();
+                        if (isPossible(row, col, option))
+                        {
+                            AlterCell(row, col, option, 5); // 5 is a confidence metric used to show that the cell has been messed with
+                            if (col < 8)
+                            {
+                                col = col + 1;
+                                return BruteForceSolver(row, col, 0); // 0 flag means nothing is wrong
+                            }
+                            else if (row < 9)
+                            {
+                                row = row+ 1;
+                                return BruteForceSolver(row, 0, 0); // 0 flag means nothing is wrong
+                            }
+                        }
+                        else
+                        {
+                            return BruteForceSolver(row, col, 0);
+                        }
+                    }
+                    else
+                    {
+                        Queue<char> refreshOptions = new Queue<char>();// = new Queue<char>(new[] { '1', '2', '3', '4', '5', '6', '7', '8', '9' });
+                        refreshOptions.Enqueue('1');
+                        refreshOptions.Enqueue('2');
+                        refreshOptions.Enqueue('3');
+                        refreshOptions.Enqueue('4');
+                        refreshOptions.Enqueue('5');
+                        refreshOptions.Enqueue('6');
+                        refreshOptions.Enqueue('7');
+                        refreshOptions.Enqueue('8');
+                        refreshOptions.Enqueue('9');
+
+                        _board[row, col].possibleMoves = refreshOptions;
+                        return BruteForceSolver(row, col, 999);
+                    }
+                }
+            }
+            else
+            {
+                // flag triggered back tracking
+                if(_board[row,col].Conf==5)
+                {
+                    AlterCell(row, col, 'k', 10);
+                    return BruteForceSolver(row, col, 0);
+                }
+                else
+                {
+                    if (col > 0)
+                    {
+                        col = col - 1;
+                        return BruteForceSolver(row, col, 999);
+                    }
+                    else if (row > 0)
+                    {
+                        row = row - 1;
+                        return BruteForceSolver(row, 8, 999);
+                    }
+                    else
+                        return false; // if here that means this problem is NOT solveable somehow come up with a flag for this
+                }
+            }
+           
+            return false;
+        }
+
+        public void DisplayStatistics()
+        {
+            Console.WriteLine("The Brute force search resulted in "+MoveCounter+" Moves when there were "+PotentialMoves+" potential moves");
+            Console.WriteLine("There were " + BacktrackCounter + " back tracking moves made.");
         }
 
         /***Testing funciton section***/
@@ -429,5 +576,8 @@ namespace ConsoleSudoku
         public Square[,] _board;
         public Box[] _boxes;
         public Stack<Square[,]> _previousBoards;
+        public int MoveCounter = 0;
+        public int PotentialMoves;
+        public int BacktrackCounter;
     }
 }

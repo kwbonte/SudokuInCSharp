@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleSudoku
 {
@@ -18,7 +14,14 @@ namespace ConsoleSudoku
             // Game initialization 
             game_board = new Board(game_selection);
             game_board.PrintBoard();
-            DisplayControls();
+            //Boolean a = game_board.PassThroughAndFillOutTheCertainSquares(false);
+            //game_board.PrintBoard();
+            // ********************** FORTESTING PURPOSES YOU ALTERED the intermediate text file [0,6]:9***** /////
+            Console.WriteLine(game_board.BruteForceSolver(0,0,0));
+            game_board.PrintBoard();
+
+            Console.ReadKey();
+            /*DisplayControls();
 
             // Game Console interface loop
             Boolean not_exited = true;
@@ -53,6 +56,14 @@ namespace ConsoleSudoku
                 {
                     UserInput(user_input);
                 }
+                else if(user_input=="numpossible")
+                {
+                    Console.WriteLine("There are "+game_board.GetNumPossibleMoves() + " potential moves.");
+                }
+                else
+                {
+                    Console.WriteLine("Your syntax was incorrect. Type help to see some examples.");
+                }
             }
             if(not_exited)
             {
@@ -64,13 +75,15 @@ namespace ConsoleSudoku
             {
                 Console.WriteLine("Thanks for playing!");
                 Console.ReadKey();
-            }
+            } //*/
         }
         public static void DisplayControls()
         {
             Console.WriteLine("The controls for this game are as follows: ");
             Console.WriteLine("\t[row,col]:x");
             Console.WriteLine("Where row is from 0-8, col is from 0-8 and x is the numeric input 1-9");
+            Console.WriteLine("Put an underscore in place of x to clear a user input integer");
+            Console.WriteLine("Put a question mark in place of x to receive a hint.");
             Console.WriteLine("Type solve to make a pass through and solve the obvious squares.");
             Console.WriteLine("Type exit to quit");
             Console.WriteLine("Type help for these controls to be displayed again.");
@@ -143,7 +156,7 @@ namespace ConsoleSudoku
                                         Console.WriteLine("This move was NOT possible");
                                     }
                                 }
-                                if (user_input[6] == '_')
+                                else if (user_input[6] == '_')
                                 {
                                     if (game_board.UserInputSquare(row, col))
                                     {
@@ -154,9 +167,38 @@ namespace ConsoleSudoku
                                     else
                                         Console.WriteLine("Cannot clear specified cell.");
                                 }
+                                else if (user_input[6] == '?')
+                                {
+                                    Console.WriteLine("Add in hint functionality");
+                                    //TODO add in hint functionality
+                                    // have it display all the probabilities
+                                    // Board.GetHintFor(int row, int col)
+                                    // going to be a void method 
+                                    // display input and its probability of being the answer
+
+                                    //potentially later filter the display to include only the possible ones
+
+                                    game_board.GetHint(row, col);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("The col value has to be from 0-8. Please try again.");
                             }
                         }
+                        else
+                        {
+                            Console.WriteLine("The col value has to be an integer. Please try again.");
+                        }
                     }
+                    else
+                    {
+                        Console.WriteLine("The row value has to be an integer from 0-8. Please try again.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("The row value has to be an integer. Please try again.");
                 }
             }
             else
