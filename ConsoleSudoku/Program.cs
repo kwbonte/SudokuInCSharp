@@ -1,97 +1,139 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace ConsoleSudoku
 {
     class Program
     {
-        private static Board game_board;
+        private static Board Brute1_game_board;
+        private static Board Brute2_game_board;
+        private static Board Brute3_game_board;
+        private static Board Brute4_game_board;
+        private static Board Brute5_game_board;
         static void Main(string[] args)
         {
-            // Start of application
-            
-            // Game initialization 
-            
-            //Boolean a = game_board.PassThroughAndFillOutTheCertainSquares(false);
-            //game_board.PrintBoard();
-            // ********************** FORTESTING PURPOSES YOU ALTERED the intermediate text file [0,6]:9***** /////
+            // ------------------------------------------------------------ //
+            //THREAD 1 testing EASY 1 on Brute basic
+            Stopwatch clock1 = new Stopwatch();
+            clock1.Start();
 
-            Thread Brute = new Thread(Program.BruteForceSolve, 800000000);
-            Brute.Start("nytToday.txt");
-            //sudoku_input_intermediate_1 8388608
-            //Console.WriteLine(game_board.BruteForceSolver(0, 0, 0));
-            //game_board.PrintBoard();
+            Thread Brute1 = new Thread(Program.BruteForceSolve, 2048);
+            Brute1.Start("sudoku_input_easy_1.txt");
+            Brute1.Join();
+
+            clock1.Stop();
+            
+            Console.WriteLine("Thread1 on Easy1 took " + clock1.Elapsed.TotalMilliseconds + " Milliseconds on dumb Brute");
+            double totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
+
+            // ------------------------------------------------------------ //
+            // THREAD 2 testing EASY 2 on Brute basic
+            clock1.Start();
+
+            Thread Brute2 = new Thread(Program.Brute2ForceSolve, 2048);
+            Brute2.Start("sudoku_input_easy_2.txt");
+            Brute2.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
+            Console.WriteLine("Thread2 on Easy2 took " + (clock1.Elapsed.TotalMilliseconds-totalMilliseconds) + " Milliseconds on dumb Brute");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
+
+            // ------------------------------------------------------------ //
+            // THREAD 3 testing INTERMEDIATE 1 on Brute basic
+            clock1.Start();
+
+            Thread Brute3 = new Thread(Program.Brute3ForceSolve, 8000000);
+            Brute3.Start("sudoku_input_intermediate_1.txt");
+            Brute3.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
+            Console.WriteLine("Thread3 on Intermediate 2 took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on dumb Brute");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
+
+            // ------------------------------------------------------------ //
+            // THREAD 4 testing RANDOM on Brute basic
+            clock1.Start();
+
+            Thread Brute4 = new Thread(Program.Brute4ForceSolve, 1000000);
+            Brute4.Start("random.txt");
+            Brute4.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
+            Console.WriteLine("Thread4 on Random took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on dumb Brute");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
+
+            // ------------------------------------------------------------ //
+            // THREAD 5 testing NYT on Brute basic
+            clock1.Start();
+
+            Thread Brute5 = new Thread(Program.Brute5ForceSolve, 800000000);
+            Brute5.Start("nytToday.txt");
+            Brute5.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
+            Console.WriteLine("Thread5 on NYT took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on dumb Brute");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
 
             Console.ReadKey();
-            /*DisplayControls();
-
-            // Game Console interface loop
-            Boolean not_exited = true;
-            while(!game_board.Done() && not_exited)
-            {
-                Console.Write(">");
-                string user_input = Console.ReadLine().ToLower();
-                if (user_input == "help")
-                {
-                    DisplayControls();
-                }
-                else if(user_input == "solve")
-                {
-                    Boolean SolveChangedSomething = game_board.PassThroughAndFillOutTheCertainSquares(false);
-                    if(SolveChangedSomething)
-                        game_board.PrintBoard();
-                    else
-                        Console.WriteLine("Solve was unable to make changes, it is up to user input to make progress.");
-                }
-                else if (user_input == "exit")
-                {
-                    not_exited = false;
-                }
-                else if (user_input == "undo") // for some reason i am struggling to make this copy correctly
-                {
-                    if(game_board.Undo())
-                        game_board.PrintBoard();
-                    else
-                        Console.WriteLine("Undo is not possible at this time.");
-                }
-                else if(user_input.Length==7)
-                {
-                    UserInput(user_input);
-                }
-                else if(user_input=="numpossible")
-                {
-                    Console.WriteLine("There are "+game_board.GetNumPossibleMoves() + " potential moves.");
-                }
-                else
-                {
-                    Console.WriteLine("Your syntax was incorrect. Type help to see some examples.");
-                }
-            }
-            if(not_exited)
-            {
-                Console.WriteLine("You Won! Congrats");
-                Console.ReadKey();
-                // Display statistics like time and number of moves
-            }
-            else
-            {
-                Console.WriteLine("Thanks for playing!");
-                Console.ReadKey();
-            } //*/
-            Console.WriteLine();
         }
+
         public static void BruteForceSolve(object data)
         {
-            //string game_selection = Greeting();
-            //Console.WriteLine("Game Selection Results: " + game_selection);
-
-            game_board = new Board(data.ToString());
-            game_board.PrintBoard();
-            Console.WriteLine("Messing with threads");
-            Boolean a = game_board.BruteForceSolver(0, 0, 0);
-            game_board.PrintBoard();
+            Brute1_game_board = new Board(data.ToString());
+            Brute1_game_board.PrintBoard();
+            Console.WriteLine("Messing with threads1");
+            Boolean a = Brute1_game_board.BruteForceSolver(0, 0, 0);
+            Brute1_game_board.PrintBoard();
+            
+        }
+        public static void Brute2ForceSolve(object data)
+        {
+            Brute2_game_board = new Board(data.ToString());
+            Brute2_game_board.PrintBoard();
+            Console.WriteLine("Messing with threads2");
+            Boolean a = Brute2_game_board.BruteForceSolver(0, 0, 0);
+            Brute2_game_board.PrintBoard();
+        }
+        public static void Brute3ForceSolve(object data)
+        {
+            Brute3_game_board = new Board(data.ToString());
+            Brute3_game_board.PrintBoard();
+            Console.WriteLine("Messing with threads3");
+            Boolean a = Brute3_game_board.BruteForceSolver(0, 0, 0);
+            Brute3_game_board.PrintBoard();
+        }
+        public static void Brute4ForceSolve(object data)
+        {
+            Brute4_game_board = new Board(data.ToString());
+            Brute4_game_board.PrintBoard();
+            Console.WriteLine("Messing with threads4");
+            Boolean a = Brute4_game_board.BruteForceSolver(0, 0, 0);
+            Brute4_game_board.PrintBoard();
+        }
+        public static void Brute5ForceSolve(object data)
+        {
+            Brute5_game_board = new Board(data.ToString());
+            Brute5_game_board.PrintBoard();
+            Console.WriteLine("Messing with threads5");
+            Boolean a = Brute5_game_board.BruteForceSolver(0, 0, 0);
+            Brute5_game_board.PrintBoard();
         }
 
+        /*
         public static void DisplayControls()
         {
             Console.WriteLine("The controls for this game are as follows: ");
@@ -221,6 +263,62 @@ namespace ConsoleSudoku
                 Console.WriteLine("See controls, your syntax is incorrect");
             }
         }
+        /*
+            // Game Console interface loop
+            Boolean not_exited = true;
+            while(!game_board.Done() && not_exited)
+            {
+                Console.Write(">");
+                string user_input = Console.ReadLine().ToLower();
+                if (user_input == "help")
+                {
+                    DisplayControls();
+                }
+                else if(user_input == "solve")
+                {
+                    Boolean SolveChangedSomething = game_board.PassThroughAndFillOutTheCertainSquares(false);
+                    if(SolveChangedSomething)
+                        game_board.PrintBoard();
+                    else
+                        Console.WriteLine("Solve was unable to make changes, it is up to user input to make progress.");
+                }
+                else if (user_input == "exit")
+                {
+                    not_exited = false;
+                }
+                else if (user_input == "undo") // for some reason i am struggling to make this copy correctly
+                {
+                    if(game_board.Undo())
+                        game_board.PrintBoard();
+                    else
+                        Console.WriteLine("Undo is not possible at this time.");
+                }
+                else if(user_input.Length==7)
+                {
+                    UserInput(user_input);
+                }
+                else if(user_input=="numpossible")
+                {
+                    Console.WriteLine("There are "+game_board.GetNumPossibleMoves() + " potential moves.");
+                }
+                else
+                {
+                    Console.WriteLine("Your syntax was incorrect. Type help to see some examples.");
+                }
+            }
+            if(not_exited)
+            {
+                Console.WriteLine("You Won! Congrats");
+                Console.ReadKey();
+                // Display statistics like time and number of moves
+            }
+            else
+            {
+                Console.WriteLine("Thanks for playing!");
+                Console.ReadKey();
+            } //*/
+         
+         //*/
     }
 }
 
