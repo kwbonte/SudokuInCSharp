@@ -26,6 +26,17 @@ namespace ConsoleSudoku
             catch(Exception ex) { Console.WriteLine(ex.Message); }
 
             _previousBoards = new Stack<Square[,]>();
+            coords = new List<Coord>(new Coord[]{
+                new Coord(0, 0), new Coord(0, 1), new Coord(0, 2), new Coord(1, 0), new Coord(1, 1), new Coord(1, 2), new Coord(2, 0), new Coord(2, 1), new Coord(2, 2), // BoxID 0
+                new Coord(0, 3), new Coord(0, 4), new Coord(0, 5), new Coord(1, 3), new Coord(1, 4), new Coord(1, 5), new Coord(2, 3), new Coord(2, 4), new Coord(2, 5), // BoxID 1
+                new Coord(0, 6), new Coord(0, 7), new Coord(0, 8), new Coord(1, 6), new Coord(1, 7), new Coord(1, 8), new Coord(2, 6), new Coord(2, 7), new Coord(2, 8), // BoxID 2
+                new Coord(3, 0), new Coord(3, 1), new Coord(3, 2), new Coord(4, 0), new Coord(4, 1), new Coord(4, 2), new Coord(5, 0), new Coord(5, 1), new Coord(5, 2), // BoxID 3
+                new Coord(3, 3), new Coord(3, 4), new Coord(3, 5), new Coord(4, 3), new Coord(4, 4), new Coord(4, 5), new Coord(5, 3), new Coord(5, 4), new Coord(5, 5), // BoxID 4
+                new Coord(3, 6), new Coord(3, 7), new Coord(3, 8), new Coord(4, 6), new Coord(4, 7), new Coord(4, 8), new Coord(5, 6), new Coord(5, 7), new Coord(5, 8), // BoxID 5
+                new Coord(6, 0), new Coord(6, 1), new Coord(6, 2), new Coord(7, 0), new Coord(7, 1), new Coord(7, 2), new Coord(8, 0), new Coord(8, 1), new Coord(8, 2), // BoxID 6
+                new Coord(6, 3), new Coord(6, 4), new Coord(6, 5), new Coord(7, 3), new Coord(7, 4), new Coord(7, 5), new Coord(8, 3), new Coord(8, 4), new Coord(8, 5), // BoxID 7
+                new Coord(6, 6), new Coord(6, 7), new Coord(6, 8), new Coord(7, 6), new Coord(7, 7), new Coord(7, 8), new Coord(8, 6), new Coord(8, 7), new Coord(8, 8)  // BodID 8
+            });
             //addPrevious();
             PotentialMoves = GetNumPossibleMoves();
             Console.WriteLine();
@@ -298,12 +309,12 @@ namespace ConsoleSudoku
             _board[x, y].Val = a;
             _board[x, y].Conf = c;
             MoveCounter = MoveCounter + 1;
-            if (MoveCounter>500000)
-            {
-                Console.WriteLine("Cell Alteration. "+MoveCounter+" [" + x + ", " + y + "]: " + a);
-                PrintBoard();
-                Console.WriteLine();
-            }
+            //if (MoveCounter>500000)
+            //{
+                //Console.WriteLine("Cell Alteration. "+MoveCounter+" [" + x + ", " + y + "]: " + a);
+                //PrintBoard();
+                //Console.WriteLine();
+           // }/
 
             if (a == 'k') { BacktrackCounter = BacktrackCounter + 1; }
             //addPrevious();
@@ -398,7 +409,7 @@ namespace ConsoleSudoku
             return totalMoves;
         }
 
-
+        // works from top left to bottom right 00 -> 08 .. 10->18
         public Boolean BruteForceSolver(int row, int col, int flag) // int flag is a temp val used to make for back tracking
         {
 
@@ -491,9 +502,88 @@ namespace ConsoleSudoku
            
             return false;
         }
+        
+            
+        
+        public Boolean BoxBruteForceSolver(int index, Boolean needToBackTrack)
+        {
+            if (index == coords.Count)
+            {
+                DisplayStatistics();
+                return true;
+            }
+            else
+            {
+                if (!needToBackTrack)
+                {
+                    Coord current = coords[index];
+                    int row = current.row;
+                    int col = current.col;
+                    if (_board[row, col].Conf == 1 || _board[row, col].Conf == 2)
+                    {
+                        index = index + 1;
+                        return BoxBruteForceSolver(index, false);
+                    }
+                    if (_board[row, col].possibleMoves.Count > 0)
+                    {
+                        char option = _board[row, col].possibleMoves.Dequeue();
+                        if (isPossible(row, col, option))
+                        {
+                            AlterCell(row, col, option, 5); // 5 is a confidence metric used to show that the cell has been messed with
+                            index = index + 1;
+                            return BoxBruteForceSolver(index, false);
+                        }
+                        else
+                        {
+                            return BoxBruteForceSolver(index, false);
+                        }
+                    }
+                    else
+                    {
+                        Queue<char> refreshOptions = new Queue<char>();// = new Queue<char>(new[] { '1', '2', '3', '4', '5', '6', '7', '8', '9' });
+                        refreshOptions.Enqueue('1');
+                        refreshOptions.Enqueue('2');
+                        refreshOptions.Enqueue('3');
+                        refreshOptions.Enqueue('4');
+                        refreshOptions.Enqueue('5');
+                        refreshOptions.Enqueue('6');
+                        refreshOptions.Enqueue('7');
+                        refreshOptions.Enqueue('8');
+                        refreshOptions.Enqueue('9');
+
+                        _board[row, col].possibleMoves = refreshOptions;
+                        return BoxBruteForceSolver(index, true);
+                    }
+                }
+                else
+                {
+                    Coord current = coords[index];
+                    int row = current.row;
+                    int col = current.col;
+                    // flag triggered back tracking
+                    if (_board[row, col].Conf == 5)
+                    {
+                        AlterCell(row, col, 'k', 10);
+                        return BoxBruteForceSolver(index, false);
+                    }
+                    else
+                    {
+                        if (index > 0)
+                        {
+                            index = index - 1;
+                            return BoxBruteForceSolver(index, true);
+                        }
+                        else
+                            return false; // if here that means this problem is NOT solveable somehow come up with a flag for this
+                    }
+                }
+            }
+            
+        }
 
         public void DisplayStatistics()
         {
+            Console.WriteLine("Dafuq");
             Console.WriteLine("The Brute force search resulted in "+MoveCounter+" Moves when there were "+PotentialMoves+" potential moves");
             Console.WriteLine("There were " + BacktrackCounter + " back tracking moves made.");
         }
@@ -577,5 +667,7 @@ namespace ConsoleSudoku
         public int MoveCounter = 0;
         public int PotentialMoves;
         public int BacktrackCounter;
+        List<Coord> coords;
+        
     }
 }

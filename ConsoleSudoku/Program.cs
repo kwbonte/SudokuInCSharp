@@ -29,6 +29,22 @@ namespace ConsoleSudoku
             // ------------------------------------------------------------ //
 
             // ------------------------------------------------------------ //
+            //THREAD 1 testing EASY 1 on Brute Box
+            clock1 = new Stopwatch();
+            clock1.Start();
+
+            Brute1 = new Thread(Program.BoxBruteForceSolve, 2048);
+            Brute1.Start(new threadObject("sudoku_input_easy_1.txt", 1));
+            Brute1.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine("Thread1 on Easy1 took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on box Brute");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
+
+
+            // ------------------------------------------------------------ //
             // THREAD 2 testing EASY 2 on Brute basic
             clock1.Start();
 
@@ -40,6 +56,21 @@ namespace ConsoleSudoku
 
             Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
             Console.WriteLine("Thread2 on Easy2 took " + (clock1.Elapsed.TotalMilliseconds-totalMilliseconds) + " Milliseconds on dumb Brute");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
+
+            // ------------------------------------------------------------ //
+            // THREAD 2 testing EASY 2 on Brute Box
+            clock1.Start();
+
+            Brute2 = new Thread(Program.BoxBruteForceSolve, 2048);
+            Brute2.Start(new threadObject("sudoku_input_easy_2.txt", 2));
+            Brute2.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
+            Console.WriteLine("Thread2 on Easy2 took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on box Brute");
             totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
             // ------------------------------------------------------------ //
 
@@ -59,6 +90,21 @@ namespace ConsoleSudoku
             // ------------------------------------------------------------ //
 
             // ------------------------------------------------------------ //
+            // THREAD 3 testing INTERMEDIATE 1 on Brute Box
+            clock1.Start();
+
+            Brute3 = new Thread(Program.BoxBruteForceSolve, 80000000);
+            Brute3.Start(new threadObject("sudoku_input_intermediate_1.txt", 3));
+            Brute3.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
+            Console.WriteLine("Thread3 on Intermediate 2 took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on box Brute");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
+
+            // ------------------------------------------------------------ //
             // THREAD 4 testing RANDOM on Brute basic
             clock1.Start();
 
@@ -70,6 +116,21 @@ namespace ConsoleSudoku
 
             Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
             Console.WriteLine("Thread4 on Random took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on dumb Brute");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
+
+            // ------------------------------------------------------------ //
+            // THREAD 4 testing RANDOM on Brute Box
+            clock1.Start();
+
+            Brute4 = new Thread(Program.BoxBruteForceSolve, 1000000);
+            Brute4.Start(new threadObject("random.txt", 4));
+            Brute4.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
+            Console.WriteLine("Thread4 on Random took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on box Brute");
             totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
             // ------------------------------------------------------------ //
 
@@ -87,7 +148,23 @@ namespace ConsoleSudoku
             Console.WriteLine("Thread5 on NYT took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on dumb Brute");
             totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
             // ------------------------------------------------------------ //
+      
+            // ------------------------------------------------------------ //
+            // THREAD 5 testing NYT on Brute Box
+            clock1.Start();
+
+            Brute5 = new Thread(Program.BoxBruteForceSolve, 800000000);
+            Brute5.Start(new threadObject("nytToday.txt", 5));
+            Brute5.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
+            Console.WriteLine("Thread5 on NYT took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on box Brute");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
             //*/
+
             Console.ReadKey();
         }
 
@@ -97,11 +174,23 @@ namespace ConsoleSudoku
             string[] decoder = data1.ToString().Split(':');
 
             game_board = new Board(decoder[0]);
-            game_board.PrintBoard();
-            Console.WriteLine("Messing with threads "+decoder[1]);
+            //game_board.PrintBoard();
+            //Console.WriteLine("Messing with threads "+decoder[1]);
             Boolean a = game_board.BruteForceSolver(0, 0, 0);
             game_board.PrintBoard();
             
+        }
+        // TODO: fix timer on first thread set
+        public static void BoxBruteForceSolve(object data)
+        {
+            Console.WriteLine(data.ToString());
+            string[] decoder = data.ToString().Split(':');
+
+            game_board = new Board(decoder[0]);
+            //game_board.PrintBoard();
+            //Console.WriteLine("Messing with box threads " + decoder[1]);
+            Boolean a = game_board.BoxBruteForceSolver(0, false);
+            game_board.PrintBoard();
         }
         /*
         public static void Brute2ForceSolve(object data)
