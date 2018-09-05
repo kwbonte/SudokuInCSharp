@@ -129,7 +129,6 @@ namespace ConsoleSudoku
                     {
                         Console.Write('|');
                     }
-
                 }
                 Console.WriteLine();
             }
@@ -151,7 +150,6 @@ namespace ConsoleSudoku
                 {
                     if (_board[i, j].Val == 'k')
                     {
-                        //Console.WriteLine("ERMAGERHED\n\n\n");
                         return false;
                     }
                 }

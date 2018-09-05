@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace ConsoleSudoku
 {
@@ -8,17 +9,18 @@ namespace ConsoleSudoku
         static void Main(string[] args)
         {
             // Start of application
-            string game_selection = Greeting();
-            Console.WriteLine("Game Selection Results: " + game_selection);
-
+            
             // Game initialization 
-            game_board = new Board(game_selection);
-            game_board.PrintBoard();
+            
             //Boolean a = game_board.PassThroughAndFillOutTheCertainSquares(false);
             //game_board.PrintBoard();
             // ********************** FORTESTING PURPOSES YOU ALTERED the intermediate text file [0,6]:9***** /////
-            Console.WriteLine(game_board.BruteForceSolver(0,0,0));
-            game_board.PrintBoard();
+
+            Thread Brute = new Thread(Program.BruteForceSolve);
+            Brute.Start("sudoku_input_intermediate_1.txt");
+
+            //Console.WriteLine(game_board.BruteForceSolver(0, 0, 0));
+            //game_board.PrintBoard();
 
             Console.ReadKey();
             /*DisplayControls();
@@ -76,7 +78,20 @@ namespace ConsoleSudoku
                 Console.WriteLine("Thanks for playing!");
                 Console.ReadKey();
             } //*/
+            Console.WriteLine();
         }
+        public static void BruteForceSolve(object data)
+        {
+            //string game_selection = Greeting();
+            //Console.WriteLine("Game Selection Results: " + game_selection);
+
+            game_board = new Board(data.ToString());
+            game_board.PrintBoard();
+            Console.WriteLine("Messing with threads");
+            Boolean a = game_board.BruteForceSolver(0, 0, 0);
+            game_board.PrintBoard();
+        }
+
         public static void DisplayControls()
         {
             Console.WriteLine("The controls for this game are as follows: ");
@@ -92,14 +107,14 @@ namespace ConsoleSudoku
         public static string Greeting()
         {
             Console.WriteLine("Welcome to the Sudoku console game!");
-            string[] list_of_games = new string[] { "sudoku_input_easy_1.txt", "sudoku_input_easy_2.txt", "sudoku_input_intermediate_1.txt" };
+            string[] list_of_games = new string[] { "sudoku_input_easy_1.txt", "sudoku_input_easy_2.txt", "sudoku_input_intermediate_1.txt", "random.txt" };
 
             Console.WriteLine("We currently have " + list_of_games.Length + " games you can play.");
             Console.WriteLine();
 
             Console.WriteLine("Please select which game you would like to play.");
             Console.WriteLine("================================================");
-            for (int i =0; i < list_of_games.Length; i++)
+            for (int i = 0; i < list_of_games.Length; i++)
             {
                 Console.WriteLine("\t[" + i + "]: " + list_of_games[i]);
             }
@@ -114,13 +129,13 @@ namespace ConsoleSudoku
             int selector = -1;
             if (Int32.TryParse(Console.ReadLine(), out selector))
             {
-                if(selector>=size ||selector<0)
-                    return ReturnSelection("Please Try agian and only use the keys 0-" + (size-1)+": ", size);
+                if (selector >= size || selector < 0)
+                    return ReturnSelection("Please Try agian and only use the keys 0-" + (size - 1) + ": ", size);
                 return selector;
             }
             else
             {
-                return ReturnSelection("Please Try agian and only use the keys 0-" + (size-1) + ": ", size);
+                return ReturnSelection("Please Try agian and only use the keys 0-" + (size - 1) + ": ", size);
             }
         }
 
@@ -208,4 +223,5 @@ namespace ConsoleSudoku
         }
     }
 }
+
 
