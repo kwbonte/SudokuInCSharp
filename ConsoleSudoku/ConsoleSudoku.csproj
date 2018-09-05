@@ -53,6 +53,7 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="Square.cs" />
+    <Compile Include="threadObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

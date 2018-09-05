@@ -6,11 +6,11 @@ namespace ConsoleSudoku
 {
     class Program
     {
-        private static Board Brute1_game_board;
-        private static Board Brute2_game_board;
-        private static Board Brute3_game_board;
-        private static Board Brute4_game_board;
-        private static Board Brute5_game_board;
+        private static Board game_board;
+        //private static Board Brute2_game_board;
+        //private static Board Brute3_game_board;
+        //private static Board Brute4_game_board;
+        //private static Board Brute5_game_board;
         static void Main(string[] args)
         {
             // ------------------------------------------------------------ //
@@ -18,8 +18,8 @@ namespace ConsoleSudoku
             Stopwatch clock1 = new Stopwatch();
             clock1.Start();
 
-            Thread Brute1 = new Thread(Program.BruteForceSolve, 2048);
-            Brute1.Start("sudoku_input_easy_1.txt");
+            Thread Brute1 = new Thread(Program.DumbBruteForceSolve, 2048);
+            Brute1.Start(new threadObject("sudoku_input_easy_1.txt",1));
             Brute1.Join();
 
             clock1.Stop();
@@ -32,10 +32,10 @@ namespace ConsoleSudoku
             // THREAD 2 testing EASY 2 on Brute basic
             clock1.Start();
 
-            Thread Brute2 = new Thread(Program.Brute2ForceSolve, 2048);
-            Brute2.Start("sudoku_input_easy_2.txt");
+            Thread Brute2 = new Thread(Program.DumbBruteForceSolve, 2048);
+            Brute2.Start(new threadObject("sudoku_input_easy_2.txt",2));
             Brute2.Join();
-
+            
             clock1.Stop();
 
             Console.WriteLine(clock1.Elapsed.TotalMilliseconds + "    : " + totalMilliseconds);
@@ -47,8 +47,8 @@ namespace ConsoleSudoku
             // THREAD 3 testing INTERMEDIATE 1 on Brute basic
             clock1.Start();
 
-            Thread Brute3 = new Thread(Program.Brute3ForceSolve, 8000000);
-            Brute3.Start("sudoku_input_intermediate_1.txt");
+            Thread Brute3 = new Thread(Program.DumbBruteForceSolve, 8000000);
+            Brute3.Start(new threadObject("sudoku_input_intermediate_1.txt",3));
             Brute3.Join();
 
             clock1.Stop();
@@ -62,8 +62,8 @@ namespace ConsoleSudoku
             // THREAD 4 testing RANDOM on Brute basic
             clock1.Start();
 
-            Thread Brute4 = new Thread(Program.Brute4ForceSolve, 1000000);
-            Brute4.Start("random.txt");
+            Thread Brute4 = new Thread(Program.DumbBruteForceSolve, 1000000);
+            Brute4.Start(new threadObject("random.txt",4));
             Brute4.Join();
 
             clock1.Stop();
@@ -77,8 +77,8 @@ namespace ConsoleSudoku
             // THREAD 5 testing NYT on Brute basic
             clock1.Start();
 
-            Thread Brute5 = new Thread(Program.Brute5ForceSolve, 800000000);
-            Brute5.Start("nytToday.txt");
+            Thread Brute5 = new Thread(Program.DumbBruteForceSolve, 800000000);
+            Brute5.Start(new threadObject("nytToday.txt",5));
             Brute5.Join();
 
             clock1.Stop();
@@ -87,19 +87,23 @@ namespace ConsoleSudoku
             Console.WriteLine("Thread5 on NYT took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on dumb Brute");
             totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
             // ------------------------------------------------------------ //
-
+            //*/
             Console.ReadKey();
         }
 
-        public static void BruteForceSolve(object data)
+        public static void DumbBruteForceSolve(object data1)
         {
-            Brute1_game_board = new Board(data.ToString());
-            Brute1_game_board.PrintBoard();
-            Console.WriteLine("Messing with threads1");
-            Boolean a = Brute1_game_board.BruteForceSolver(0, 0, 0);
-            Brute1_game_board.PrintBoard();
+            Console.WriteLine(data1.ToString());
+            string[] decoder = data1.ToString().Split(':');
+
+            game_board = new Board(decoder[0]);
+            game_board.PrintBoard();
+            Console.WriteLine("Messing with threads "+decoder[1]);
+            Boolean a = game_board.BruteForceSolver(0, 0, 0);
+            game_board.PrintBoard();
             
         }
+        /*
         public static void Brute2ForceSolve(object data)
         {
             Brute2_game_board = new Board(data.ToString());
@@ -132,7 +136,7 @@ namespace ConsoleSudoku
             Boolean a = Brute5_game_board.BruteForceSolver(0, 0, 0);
             Brute5_game_board.PrintBoard();
         }
-
+        */
         /*
         public static void DisplayControls()
         {
