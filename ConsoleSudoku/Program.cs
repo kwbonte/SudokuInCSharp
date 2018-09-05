@@ -16,9 +16,9 @@ namespace ConsoleSudoku
             //game_board.PrintBoard();
             // ********************** FORTESTING PURPOSES YOU ALTERED the intermediate text file [0,6]:9***** /////
 
-            Thread Brute = new Thread(Program.BruteForceSolve);
-            Brute.Start("sudoku_input_intermediate_1.txt");
-
+            Thread Brute = new Thread(Program.BruteForceSolve, 800000000);
+            Brute.Start("nytToday.txt");
+            //sudoku_input_intermediate_1 8388608
             //Console.WriteLine(game_board.BruteForceSolver(0, 0, 0));
             //game_board.PrintBoard();
 

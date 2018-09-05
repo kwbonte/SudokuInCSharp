@@ -298,7 +298,7 @@ namespace ConsoleSudoku
             _board[x, y].Val = a;
             _board[x, y].Conf = c;
             MoveCounter = MoveCounter + 1;
-            if (MoveCounter>600)
+            if (MoveCounter>500000)
             {
                 Console.WriteLine("Cell Alteration. "+MoveCounter+" [" + x + ", " + y + "]: " + a);
                 PrintBoard();
