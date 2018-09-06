@@ -65,15 +65,15 @@ namespace ConsoleSudoku
 
             List<Coord> Cols8to0 = new List<Coord>(new Coord[]
             {
-                new Coord(0, 8), new Coord(1, 8), new Coord(2, 8), new Coord(3, 8), new Coord(4, 8), new Coord(5, 8), new Coord(6, 8), new Coord(7, 8), new Coord(8, 8), // Col 8
-                new Coord(0, 7), new Coord(1, 7), new Coord(2, 7), new Coord(3, 7), new Coord(4, 7), new Coord(5, 7), new Coord(6, 7), new Coord(7, 7), new Coord(8, 7), // Col 7
-                new Coord(0, 6), new Coord(1, 6), new Coord(2, 6), new Coord(3, 6), new Coord(4, 6), new Coord(5, 6), new Coord(6, 6), new Coord(7, 6), new Coord(8, 6), // Col 6
-                new Coord(0, 5), new Coord(1, 5), new Coord(2, 5), new Coord(3, 5), new Coord(4, 5), new Coord(5, 5), new Coord(6, 5), new Coord(7, 5), new Coord(8, 5), // Col 5
-                new Coord(0, 4), new Coord(1, 4), new Coord(2, 4), new Coord(3, 4), new Coord(4, 4), new Coord(5, 4), new Coord(6, 4), new Coord(7, 4), new Coord(8, 4), // Col 4
-                new Coord(0, 3), new Coord(1, 3), new Coord(2, 3), new Coord(3, 3), new Coord(4, 3), new Coord(5, 3), new Coord(6, 3), new Coord(7, 3), new Coord(8, 3), // Col 3
-                new Coord(0, 2), new Coord(1, 2), new Coord(2, 2), new Coord(3, 2), new Coord(4, 2), new Coord(5, 2), new Coord(6, 2), new Coord(7, 2), new Coord(8, 2), // Col 2
-                new Coord(0, 1), new Coord(1, 1), new Coord(2, 1), new Coord(3, 1), new Coord(4, 1), new Coord(5, 1), new Coord(6, 1), new Coord(7, 1), new Coord(8, 1), // Col 1
-                new Coord(0, 0), new Coord(1, 0), new Coord(2, 0), new Coord(3, 0), new Coord(4, 0), new Coord(5, 0), new Coord(6, 0), new Coord(7, 0), new Coord(8, 0)  // Col 0
+                new Coord(8, 8), new Coord(7, 8), new Coord(6, 8), new Coord(5, 8), new Coord(4, 8), new Coord(3, 8), new Coord(2, 8), new Coord(1, 8), new Coord(0, 8), // Col 8
+                new Coord(8, 7), new Coord(7, 7), new Coord(6, 7), new Coord(5, 7), new Coord(4, 7), new Coord(3, 7), new Coord(2, 7), new Coord(1, 7), new Coord(0, 7), // Col 7
+                new Coord(8, 6), new Coord(7, 6), new Coord(6, 6), new Coord(5, 6), new Coord(4, 6), new Coord(3, 6), new Coord(2, 6), new Coord(1, 6), new Coord(0, 6), // Col 6
+                new Coord(8, 5), new Coord(7, 5), new Coord(6, 5), new Coord(5, 5), new Coord(4, 5), new Coord(3, 5), new Coord(2, 5), new Coord(1, 5), new Coord(0, 5), // Col 5
+                new Coord(8, 4), new Coord(7, 4), new Coord(6, 4), new Coord(5, 4), new Coord(4, 4), new Coord(3, 4), new Coord(2, 4), new Coord(1, 4), new Coord(0, 4), // Col 4
+                new Coord(8, 3), new Coord(7, 3), new Coord(6, 3), new Coord(5, 3), new Coord(4, 3), new Coord(3, 3), new Coord(2, 3), new Coord(1, 3), new Coord(0, 3), // Col 3
+                new Coord(8, 2), new Coord(7, 2), new Coord(6, 2), new Coord(5, 2), new Coord(4, 2), new Coord(3, 2), new Coord(2, 2), new Coord(1, 2), new Coord(0, 2), // Col 2
+                new Coord(8, 1), new Coord(7, 1), new Coord(6, 1), new Coord(5, 1), new Coord(4, 1), new Coord(3, 1), new Coord(2, 1), new Coord(1, 1), new Coord(0, 1), // Col 1
+                new Coord(8, 0), new Coord(7, 0), new Coord(6, 0), new Coord(5, 0), new Coord(4, 0), new Coord(3, 0), new Coord(2, 0), new Coord(1, 0), new Coord(0, 0)  // Col 0
             });
 
             List<Coord> Boxes_012345678 = new List<Coord>(new Coord[]{
@@ -126,10 +126,15 @@ namespace ConsoleSudoku
             });
 
             List_Coords = new List<List<Coord>>(); // add the new lists
-            List_Coords.Add(Boxes_012345678);
-            List_Coords.Add(Boxes_876543210);
-            List_Coords.Add(Boxes_036147258);
-
+            List_Coords.Add(Rows0to8); // 0
+            List_Coords.Add(Rows8to0); // 1
+            List_Coords.Add(Cols0to8); // 2
+            List_Coords.Add(Cols8to0); // 3
+            List_Coords.Add(Boxes_012345678); // 4
+            List_Coords.Add(Boxes_876543210); // 5 
+            List_Coords.Add(Boxes_036147258); // 6 
+            List_Coords.Add(Boxes_852741630); // 7
+            MoveCounter = 0;
             //addPrevious();
             PotentialMoves = GetNumPossibleMoves();
             Console.WriteLine();
@@ -501,108 +506,12 @@ namespace ConsoleSudoku
 
             return totalMoves;
         }
-
-        // works from top left to bottom right 00 -> 08 .. 10->18
-        public Boolean BruteForceSolver(int row, int col, int flag) // int flag is a temp val used to make for back tracking
-        {
-
-            if(flag != 999)
-            {
-                if(row > 8 && col ==0 && Done())
-                {
-                    DisplayStatistics();
-                    return true;
-                }
-                if (_board[row, col].Conf == 1 || _board[row,col].Conf==2) // clear skip over the user input
-                {
-                    if (col < 8)
-                    {
-                        col = col + 1;
-                        return BruteForceSolver(row, col, 0); // 0 flag means nothing is wrong
-                    }
-                    else if (row < 9)
-                    {
-                        row = row + 1;
-                        return BruteForceSolver(row, 0, 0); // 0 flag means nothing is wrong
-                    }
-                }
-                else
-                {
-                    if (_board[row, col].possibleMoves.Count > 0)
-                    {
-                        char option = _board[row, col].possibleMoves.Dequeue();
-                        if (isPossible(row, col, option))
-                        {
-                            AlterCell(row, col, option, 5); // 5 is a confidence metric used to show that the cell has been messed with
-                            if (col < 8)
-                            {
-                                col = col + 1;
-                                return BruteForceSolver(row, col, 0); // 0 flag means nothing is wrong
-                            }
-                            else if (row < 9)
-                            {
-                                row = row+ 1;
-                                return BruteForceSolver(row, 0, 0); // 0 flag means nothing is wrong
-                            }
-                        }
-                        else
-                        {
-                            return BruteForceSolver(row, col, 0);
-                        }
-                    }
-                    else
-                    {
-                        Queue<char> refreshOptions = new Queue<char>();// = new Queue<char>(new[] { '1', '2', '3', '4', '5', '6', '7', '8', '9' });
-                        refreshOptions.Enqueue('1');
-                        refreshOptions.Enqueue('2');
-                        refreshOptions.Enqueue('3');
-                        refreshOptions.Enqueue('4');
-                        refreshOptions.Enqueue('5');
-                        refreshOptions.Enqueue('6');
-                        refreshOptions.Enqueue('7');
-                        refreshOptions.Enqueue('8');
-                        refreshOptions.Enqueue('9');
-
-                        _board[row, col].possibleMoves = refreshOptions;
-                        return BruteForceSolver(row, col, 999);
-                    }
-                }
-            }
-            else
-            {
-                // flag triggered back tracking
-                if(_board[row,col].Conf==5)
-                {
-                    AlterCell(row, col, 'k', 10);
-                    return BruteForceSolver(row, col, 0);
-                }
-                else
-                {
-                    if (col > 0)
-                    {
-                        col = col - 1;
-                        return BruteForceSolver(row, col, 999);
-                    }
-                    else if (row > 0)
-                    {
-                        row = row - 1;
-                        return BruteForceSolver(row, 8, 999);
-                    }
-                    else
-                        return false; // if here that means this problem is NOT solveable somehow come up with a flag for this
-                }
-            }
-           
-            return false;
-        }
-        
-            
         
         public Boolean BoxBruteForceSolver(int index, int whichList, Boolean needToBackTrack)
         {
             if (index == List_Coords[whichList].Count)
             {
-                DisplayStatistics();
+                DisplayStatistics(whichList);
                 return true;
             }
             else
@@ -673,12 +582,12 @@ namespace ConsoleSudoku
             }
             
         }
-
-        public void DisplayStatistics()
+        List<Statistic> statistics = new List<Statistic>();
+        public void DisplayStatistics(int whichList)
         {
-            Console.WriteLine("Dafuq");
-            Console.WriteLine("The Brute force search resulted in "+MoveCounter+" Moves when there were "+PotentialMoves+" potential moves");
-            Console.WriteLine("There were " + BacktrackCounter + " back tracking moves made.");
+            Statistic stat = new Statistic(whichList, MoveCounter, PotentialMoves, BacktrackCounter);
+            statistics.Add(stat);
+            Console.Write(stat);
         }
 
         /***Testing funciton section***/
@@ -757,7 +666,7 @@ namespace ConsoleSudoku
         public Square[,] _board;
         public Box[] _boxes;
         public Stack<Square[,]> _previousBoards;
-        public int MoveCounter = 0;
+        public int MoveCounter;
         public int PotentialMoves;
         public int BacktrackCounter;
         List<List<Coord>> List_Coords;
