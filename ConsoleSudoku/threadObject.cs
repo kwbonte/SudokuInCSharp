@@ -10,15 +10,25 @@ namespace ConsoleSudoku
     {
         public string FileName { get; set; }
         public int threadID { get; set; }
+        public int whichList { get; set; }
 
         public threadObject(string f, int t)
         {
             FileName = f;
             threadID = t;
+            whichList = 0;
         }
+
+        public threadObject(string f, int t, int w)
+        {
+            FileName = f;
+            threadID = t;
+            whichList = w;
+        }
+
         public override string ToString()
         {
-            return FileName + ": " + threadID;
+            return FileName + ": " + threadID +" : "+whichList;
         }
     }
 }

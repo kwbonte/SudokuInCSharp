@@ -29,21 +29,51 @@ namespace ConsoleSudoku
             // ------------------------------------------------------------ //
 
             // ------------------------------------------------------------ //
-            //THREAD 1 testing EASY 1 on Brute Box
+            //THREAD 1 testing EASY 1 on Brute Box TL->BR
             clock1 = new Stopwatch();
             clock1.Start();
 
             Brute1 = new Thread(Program.BoxBruteForceSolve, 2048);
-            Brute1.Start(new threadObject("sudoku_input_easy_1.txt", 1));
+            Brute1.Start(new threadObject("sudoku_input_easy_1.txt", 1, 0));
             Brute1.Join();
 
             clock1.Stop();
 
-            Console.WriteLine("Thread1 on Easy1 took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on box Brute");
+            Console.WriteLine("Thread1 on Easy1 took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on box Brute tlbr");
             totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
             // ------------------------------------------------------------ //
 
+            // ------------------------------------------------------------ //
+            //THREAD 1 testing EASY 1 on Brute Box BR->TL
+            clock1 = new Stopwatch();
+            clock1.Start();
 
+            Brute1 = new Thread(Program.BoxBruteForceSolve, 2048);
+            Brute1.Start(new threadObject("sudoku_input_easy_1.txt", 1, 1));
+            Brute1.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine("Thread1 on Easy1 took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on box Brute brtl");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
+
+            // ------------------------------------------------------------ //
+            //THREAD 1 testing EASY 1 on Brute Box BR->TL
+            clock1 = new Stopwatch();
+            clock1.Start();
+
+            Brute1 = new Thread(Program.BoxBruteForceSolve, 2048);
+            Brute1.Start(new threadObject("sudoku_input_easy_1.txt", 1, 2));
+            Brute1.Join();
+
+            clock1.Stop();
+
+            Console.WriteLine("Thread1 on Easy1 took " + (clock1.Elapsed.TotalMilliseconds - totalMilliseconds) + " Milliseconds on box Brute brtl");
+            totalMilliseconds = clock1.Elapsed.TotalMilliseconds;
+            // ------------------------------------------------------------ //
+
+            /*
             // ------------------------------------------------------------ //
             // THREAD 2 testing EASY 2 on Brute basic
             clock1.Start();
@@ -174,10 +204,10 @@ namespace ConsoleSudoku
             string[] decoder = data1.ToString().Split(':');
 
             game_board = new Board(decoder[0]);
-            //game_board.PrintBoard();
+            game_board.PrintBoard();
             //Console.WriteLine("Messing with threads "+decoder[1]);
             Boolean a = game_board.BruteForceSolver(0, 0, 0);
-            game_board.PrintBoard();
+            //game_board.PrintBoard();
             
         }
         // TODO: fix timer on first thread set
@@ -187,10 +217,10 @@ namespace ConsoleSudoku
             string[] decoder = data.ToString().Split(':');
 
             game_board = new Board(decoder[0]);
-            //game_board.PrintBoard();
-            //Console.WriteLine("Messing with box threads " + decoder[1]);
-            Boolean a = game_board.BoxBruteForceSolver(0, false);
             game_board.PrintBoard();
+            //Console.WriteLine("Messing with box threads " + decoder[1]);
+            Boolean a = game_board.BoxBruteForceSolver(0,0 , false);
+            //game_board.PrintBoard();
         }
         /*
         public static void Brute2ForceSolve(object data)

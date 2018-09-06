@@ -26,7 +26,57 @@ namespace ConsoleSudoku
             catch(Exception ex) { Console.WriteLine(ex.Message); }
 
             _previousBoards = new Stack<Square[,]>();
-            coords = new List<Coord>(new Coord[]{
+
+            List<Coord> Rows0to8 = new List<Coord>(new Coord[] {
+                new Coord(0, 0), new Coord(0, 1), new Coord(0, 2), new Coord(0, 3), new Coord(0, 4), new Coord(0, 5), new Coord(0, 6), new Coord(0, 7), new Coord(0, 8), // Row 0
+                new Coord(1, 0), new Coord(1, 1), new Coord(1, 2), new Coord(1, 3), new Coord(1, 4), new Coord(1, 5), new Coord(1, 6), new Coord(1, 7), new Coord(1, 8), // Row 1
+                new Coord(2, 0), new Coord(2, 1), new Coord(2, 2), new Coord(2, 3), new Coord(2, 4), new Coord(2, 5), new Coord(2, 6), new Coord(2, 7), new Coord(2, 8), // Row 2
+                new Coord(3, 0), new Coord(3, 1), new Coord(3, 2), new Coord(3, 3), new Coord(3, 4), new Coord(3, 5), new Coord(3, 6), new Coord(3, 7), new Coord(3, 8), // Row 3
+                new Coord(4, 0), new Coord(4, 1), new Coord(4, 2), new Coord(4, 3), new Coord(4, 4), new Coord(4, 5), new Coord(4, 6), new Coord(4, 7), new Coord(4, 8), // Row 4
+                new Coord(5, 0), new Coord(5, 1), new Coord(5, 2), new Coord(5, 3), new Coord(5, 4), new Coord(5, 5), new Coord(5, 6), new Coord(5, 7), new Coord(5, 8), // Row 5
+                new Coord(6, 0), new Coord(6, 1), new Coord(6, 2), new Coord(6, 3), new Coord(6, 4), new Coord(6, 5), new Coord(6, 6), new Coord(6, 7), new Coord(6, 8), // Row 6
+                new Coord(7, 0), new Coord(7, 1), new Coord(7, 2), new Coord(7, 3), new Coord(7, 4), new Coord(7, 5), new Coord(7, 6), new Coord(7, 7), new Coord(7, 8), // Row 7
+                new Coord(8, 0), new Coord(8, 1), new Coord(8, 2), new Coord(8, 3), new Coord(8, 4), new Coord(8, 5), new Coord(8, 6), new Coord(8, 7), new Coord(8, 8)  // Row 8
+            });
+
+            List<Coord> Rows8to0 = new List<Coord>(new Coord[] {
+                new Coord(8, 0), new Coord(8, 1), new Coord(8, 2), new Coord(8, 3), new Coord(8, 4), new Coord(8, 5), new Coord(8, 6), new Coord(8, 7), new Coord(8, 8), // Row 8
+                new Coord(7, 0), new Coord(7, 1), new Coord(7, 2), new Coord(7, 3), new Coord(7, 4), new Coord(7, 5), new Coord(7, 6), new Coord(7, 7), new Coord(7, 8), // Row 7
+                new Coord(6, 0), new Coord(6, 1), new Coord(6, 2), new Coord(6, 3), new Coord(6, 4), new Coord(6, 5), new Coord(6, 6), new Coord(6, 7), new Coord(6, 8), // Row 6
+                new Coord(5, 0), new Coord(5, 1), new Coord(5, 2), new Coord(5, 3), new Coord(5, 4), new Coord(5, 5), new Coord(5, 6), new Coord(5, 7), new Coord(5, 8), // Row 5
+                new Coord(4, 0), new Coord(4, 1), new Coord(4, 2), new Coord(4, 3), new Coord(4, 4), new Coord(4, 5), new Coord(4, 6), new Coord(4, 7), new Coord(4, 8), // Row 4
+                new Coord(3, 0), new Coord(3, 1), new Coord(3, 2), new Coord(3, 3), new Coord(3, 4), new Coord(3, 5), new Coord(3, 6), new Coord(3, 7), new Coord(3, 8), // Row 3
+                new Coord(2, 0), new Coord(2, 1), new Coord(2, 2), new Coord(2, 3), new Coord(2, 4), new Coord(2, 5), new Coord(2, 6), new Coord(2, 7), new Coord(2, 8), // Row 2
+                new Coord(1, 0), new Coord(1, 1), new Coord(1, 2), new Coord(1, 3), new Coord(1, 4), new Coord(1, 5), new Coord(1, 6), new Coord(1, 7), new Coord(1, 8), // Row 1
+                new Coord(0, 0), new Coord(0, 1), new Coord(0, 2), new Coord(0, 3), new Coord(0, 4), new Coord(0, 5), new Coord(0, 6), new Coord(0, 7), new Coord(0, 8)  // Row 0
+            });
+
+            List<Coord> Cols0to8 = new List<Coord>(new Coord[] {
+                new Coord(0, 0), new Coord(1, 0), new Coord(2, 0), new Coord(3, 0), new Coord(4, 0), new Coord(5, 0), new Coord(6, 0), new Coord(7, 0), new Coord(8, 0), // Col 0
+                new Coord(0, 1), new Coord(1, 1), new Coord(2, 1), new Coord(3, 1), new Coord(4, 1), new Coord(5, 1), new Coord(6, 1), new Coord(7, 1), new Coord(8, 1), // Col 1
+                new Coord(0, 2), new Coord(1, 2), new Coord(2, 2), new Coord(3, 2), new Coord(4, 2), new Coord(5, 2), new Coord(6, 2), new Coord(7, 2), new Coord(8, 2), // Col 2
+                new Coord(0, 3), new Coord(1, 3), new Coord(2, 3), new Coord(3, 3), new Coord(4, 3), new Coord(5, 3), new Coord(6, 3), new Coord(7, 3), new Coord(8, 3), // Col 3
+                new Coord(0, 4), new Coord(1, 4), new Coord(2, 4), new Coord(3, 4), new Coord(4, 4), new Coord(5, 4), new Coord(6, 4), new Coord(7, 4), new Coord(8, 4), // Col 4
+                new Coord(0, 5), new Coord(1, 5), new Coord(2, 5), new Coord(3, 5), new Coord(4, 5), new Coord(5, 5), new Coord(6, 5), new Coord(7, 5), new Coord(8, 5), // Col 5
+                new Coord(0, 6), new Coord(1, 6), new Coord(2, 6), new Coord(3, 6), new Coord(4, 6), new Coord(5, 6), new Coord(6, 6), new Coord(7, 6), new Coord(8, 6), // Col 6
+                new Coord(0, 7), new Coord(1, 7), new Coord(2, 7), new Coord(3, 7), new Coord(4, 7), new Coord(5, 7), new Coord(6, 7), new Coord(7, 7), new Coord(8, 7), // Col 7
+                new Coord(0, 8), new Coord(1, 8), new Coord(2, 8), new Coord(3, 8), new Coord(4, 8), new Coord(5, 8), new Coord(6, 8), new Coord(7, 8), new Coord(8, 8)  // Col 8
+            });
+
+            List<Coord> Cols8to0 = new List<Coord>(new Coord[]
+            {
+                new Coord(0, 8), new Coord(1, 8), new Coord(2, 8), new Coord(3, 8), new Coord(4, 8), new Coord(5, 8), new Coord(6, 8), new Coord(7, 8), new Coord(8, 8), // Col 8
+                new Coord(0, 7), new Coord(1, 7), new Coord(2, 7), new Coord(3, 7), new Coord(4, 7), new Coord(5, 7), new Coord(6, 7), new Coord(7, 7), new Coord(8, 7), // Col 7
+                new Coord(0, 6), new Coord(1, 6), new Coord(2, 6), new Coord(3, 6), new Coord(4, 6), new Coord(5, 6), new Coord(6, 6), new Coord(7, 6), new Coord(8, 6), // Col 6
+                new Coord(0, 5), new Coord(1, 5), new Coord(2, 5), new Coord(3, 5), new Coord(4, 5), new Coord(5, 5), new Coord(6, 5), new Coord(7, 5), new Coord(8, 5), // Col 5
+                new Coord(0, 4), new Coord(1, 4), new Coord(2, 4), new Coord(3, 4), new Coord(4, 4), new Coord(5, 4), new Coord(6, 4), new Coord(7, 4), new Coord(8, 4), // Col 4
+                new Coord(0, 3), new Coord(1, 3), new Coord(2, 3), new Coord(3, 3), new Coord(4, 3), new Coord(5, 3), new Coord(6, 3), new Coord(7, 3), new Coord(8, 3), // Col 3
+                new Coord(0, 2), new Coord(1, 2), new Coord(2, 2), new Coord(3, 2), new Coord(4, 2), new Coord(5, 2), new Coord(6, 2), new Coord(7, 2), new Coord(8, 2), // Col 2
+                new Coord(0, 1), new Coord(1, 1), new Coord(2, 1), new Coord(3, 1), new Coord(4, 1), new Coord(5, 1), new Coord(6, 1), new Coord(7, 1), new Coord(8, 1), // Col 1
+                new Coord(0, 0), new Coord(1, 0), new Coord(2, 0), new Coord(3, 0), new Coord(4, 0), new Coord(5, 0), new Coord(6, 0), new Coord(7, 0), new Coord(8, 0)  // Col 0
+            });
+
+            List<Coord> Boxes_012345678 = new List<Coord>(new Coord[]{
                 new Coord(0, 0), new Coord(0, 1), new Coord(0, 2), new Coord(1, 0), new Coord(1, 1), new Coord(1, 2), new Coord(2, 0), new Coord(2, 1), new Coord(2, 2), // BoxID 0
                 new Coord(0, 3), new Coord(0, 4), new Coord(0, 5), new Coord(1, 3), new Coord(1, 4), new Coord(1, 5), new Coord(2, 3), new Coord(2, 4), new Coord(2, 5), // BoxID 1
                 new Coord(0, 6), new Coord(0, 7), new Coord(0, 8), new Coord(1, 6), new Coord(1, 7), new Coord(1, 8), new Coord(2, 6), new Coord(2, 7), new Coord(2, 8), // BoxID 2
@@ -37,6 +87,49 @@ namespace ConsoleSudoku
                 new Coord(6, 3), new Coord(6, 4), new Coord(6, 5), new Coord(7, 3), new Coord(7, 4), new Coord(7, 5), new Coord(8, 3), new Coord(8, 4), new Coord(8, 5), // BoxID 7
                 new Coord(6, 6), new Coord(6, 7), new Coord(6, 8), new Coord(7, 6), new Coord(7, 7), new Coord(7, 8), new Coord(8, 6), new Coord(8, 7), new Coord(8, 8)  // BodID 8
             });
+
+            List<Coord> Boxes_876543210  = new List<Coord>(new Coord[]{
+                new Coord(6, 6), new Coord(6, 7), new Coord(6, 8), new Coord(7, 6), new Coord(7, 7), new Coord(7, 8), new Coord(8, 6), new Coord(8, 7), new Coord(8, 8), // BodID 8
+                new Coord(6, 3), new Coord(6, 4), new Coord(6, 5), new Coord(7, 3), new Coord(7, 4), new Coord(7, 5), new Coord(8, 3), new Coord(8, 4), new Coord(8, 5), // BoxID 7
+                new Coord(6, 0), new Coord(6, 1), new Coord(6, 2), new Coord(7, 0), new Coord(7, 1), new Coord(7, 2), new Coord(8, 0), new Coord(8, 1), new Coord(8, 2), // BoxID 6
+                new Coord(3, 6), new Coord(3, 7), new Coord(3, 8), new Coord(4, 6), new Coord(4, 7), new Coord(4, 8), new Coord(5, 6), new Coord(5, 7), new Coord(5, 8), // BoxID 5
+                new Coord(3, 3), new Coord(3, 4), new Coord(3, 5), new Coord(4, 3), new Coord(4, 4), new Coord(4, 5), new Coord(5, 3), new Coord(5, 4), new Coord(5, 5), // BoxID 4
+                new Coord(3, 0), new Coord(3, 1), new Coord(3, 2), new Coord(4, 0), new Coord(4, 1), new Coord(4, 2), new Coord(5, 0), new Coord(5, 1), new Coord(5, 2), // BoxID 3
+                new Coord(0, 3), new Coord(0, 4), new Coord(0, 5), new Coord(1, 3), new Coord(1, 4), new Coord(1, 5), new Coord(2, 3), new Coord(2, 4), new Coord(2, 5), // BoxID 1
+                new Coord(0, 6), new Coord(0, 7), new Coord(0, 8), new Coord(1, 6), new Coord(1, 7), new Coord(1, 8), new Coord(2, 6), new Coord(2, 7), new Coord(2, 8), // BoxID 2
+                new Coord(0, 0), new Coord(0, 1), new Coord(0, 2), new Coord(1, 0), new Coord(1, 1), new Coord(1, 2), new Coord(2, 0), new Coord(2, 1), new Coord(2, 2)  // BoxID 0
+            });
+
+            List<Coord> Boxes_036147258 = new List<Coord>(new Coord[]
+            {
+                new Coord(0, 0), new Coord(0, 1), new Coord(0, 2), new Coord(1, 0), new Coord(1, 1), new Coord(1, 2), new Coord(2, 0), new Coord(2, 1), new Coord(2, 2), // BoxID 0
+                new Coord(3, 0), new Coord(3, 1), new Coord(3, 2), new Coord(4, 0), new Coord(4, 1), new Coord(4, 2), new Coord(5, 0), new Coord(5, 1), new Coord(5, 2), // BoxID 3
+                new Coord(6, 0), new Coord(6, 1), new Coord(6, 2), new Coord(7, 0), new Coord(7, 1), new Coord(7, 2), new Coord(8, 0), new Coord(8, 1), new Coord(8, 2), // BoxID 6
+                new Coord(0, 3), new Coord(0, 4), new Coord(0, 5), new Coord(1, 3), new Coord(1, 4), new Coord(1, 5), new Coord(2, 3), new Coord(2, 4), new Coord(2, 5), // BoxID 1
+                new Coord(3, 3), new Coord(3, 4), new Coord(3, 5), new Coord(4, 3), new Coord(4, 4), new Coord(4, 5), new Coord(5, 3), new Coord(5, 4), new Coord(5, 5), // BoxID 4
+                new Coord(6, 3), new Coord(6, 4), new Coord(6, 5), new Coord(7, 3), new Coord(7, 4), new Coord(7, 5), new Coord(8, 3), new Coord(8, 4), new Coord(8, 5), // BoxID 7
+                new Coord(0, 6), new Coord(0, 7), new Coord(0, 8), new Coord(1, 6), new Coord(1, 7), new Coord(1, 8), new Coord(2, 6), new Coord(2, 7), new Coord(2, 8), // BoxID 2
+                new Coord(3, 6), new Coord(3, 7), new Coord(3, 8), new Coord(4, 6), new Coord(4, 7), new Coord(4, 8), new Coord(5, 6), new Coord(5, 7), new Coord(5, 8), // BoxID 5
+                new Coord(6, 6), new Coord(6, 7), new Coord(6, 8), new Coord(7, 6), new Coord(7, 7), new Coord(7, 8), new Coord(8, 6), new Coord(8, 7), new Coord(8, 8)  // BodID 8
+            });
+
+            List<Coord> Boxes_852741630 = new List<Coord>(new Coord[] {
+                new Coord(6, 6), new Coord(6, 7), new Coord(6, 8), new Coord(7, 6), new Coord(7, 7), new Coord(7, 8), new Coord(8, 6), new Coord(8, 7), new Coord(8, 8), // BodID 8
+                new Coord(3, 6), new Coord(3, 7), new Coord(3, 8), new Coord(4, 6), new Coord(4, 7), new Coord(4, 8), new Coord(5, 6), new Coord(5, 7), new Coord(5, 8), // BoxID 5
+                new Coord(0, 6), new Coord(0, 7), new Coord(0, 8), new Coord(1, 6), new Coord(1, 7), new Coord(1, 8), new Coord(2, 6), new Coord(2, 7), new Coord(2, 8), // BoxID 2
+                new Coord(6, 3), new Coord(6, 4), new Coord(6, 5), new Coord(7, 3), new Coord(7, 4), new Coord(7, 5), new Coord(8, 3), new Coord(8, 4), new Coord(8, 5), // BoxID 7
+                new Coord(3, 3), new Coord(3, 4), new Coord(3, 5), new Coord(4, 3), new Coord(4, 4), new Coord(4, 5), new Coord(5, 3), new Coord(5, 4), new Coord(5, 5), // BoxID 4
+                new Coord(0, 3), new Coord(0, 4), new Coord(0, 5), new Coord(1, 3), new Coord(1, 4), new Coord(1, 5), new Coord(2, 3), new Coord(2, 4), new Coord(2, 5), // BoxID 1
+                new Coord(6, 0), new Coord(6, 1), new Coord(6, 2), new Coord(7, 0), new Coord(7, 1), new Coord(7, 2), new Coord(8, 0), new Coord(8, 1), new Coord(8, 2), // BoxID 6
+                new Coord(3, 0), new Coord(3, 1), new Coord(3, 2), new Coord(4, 0), new Coord(4, 1), new Coord(4, 2), new Coord(5, 0), new Coord(5, 1), new Coord(5, 2), // BoxID 3
+                new Coord(0, 0), new Coord(0, 1), new Coord(0, 2), new Coord(1, 0), new Coord(1, 1), new Coord(1, 2), new Coord(2, 0), new Coord(2, 1), new Coord(2, 2)  // BoxID 0
+            });
+
+            List_Coords = new List<List<Coord>>(); // add the new lists
+            List_Coords.Add(Boxes_012345678);
+            List_Coords.Add(Boxes_876543210);
+            List_Coords.Add(Boxes_036147258);
+
             //addPrevious();
             PotentialMoves = GetNumPossibleMoves();
             Console.WriteLine();
@@ -505,9 +598,9 @@ namespace ConsoleSudoku
         
             
         
-        public Boolean BoxBruteForceSolver(int index, Boolean needToBackTrack)
+        public Boolean BoxBruteForceSolver(int index, int whichList, Boolean needToBackTrack)
         {
-            if (index == coords.Count)
+            if (index == List_Coords[whichList].Count)
             {
                 DisplayStatistics();
                 return true;
@@ -516,13 +609,13 @@ namespace ConsoleSudoku
             {
                 if (!needToBackTrack)
                 {
-                    Coord current = coords[index];
+                    Coord current = List_Coords[whichList][index];
                     int row = current.row;
                     int col = current.col;
                     if (_board[row, col].Conf == 1 || _board[row, col].Conf == 2)
                     {
                         index = index + 1;
-                        return BoxBruteForceSolver(index, false);
+                        return BoxBruteForceSolver(index, whichList, false);
                     }
                     if (_board[row, col].possibleMoves.Count > 0)
                     {
@@ -531,11 +624,11 @@ namespace ConsoleSudoku
                         {
                             AlterCell(row, col, option, 5); // 5 is a confidence metric used to show that the cell has been messed with
                             index = index + 1;
-                            return BoxBruteForceSolver(index, false);
+                            return BoxBruteForceSolver(index, whichList, false);
                         }
                         else
                         {
-                            return BoxBruteForceSolver(index, false);
+                            return BoxBruteForceSolver(index, whichList, false);
                         }
                     }
                     else
@@ -552,26 +645,26 @@ namespace ConsoleSudoku
                         refreshOptions.Enqueue('9');
 
                         _board[row, col].possibleMoves = refreshOptions;
-                        return BoxBruteForceSolver(index, true);
+                        return BoxBruteForceSolver(index, whichList, true);
                     }
                 }
                 else
                 {
-                    Coord current = coords[index];
+                    Coord current = List_Coords[whichList][index];
                     int row = current.row;
                     int col = current.col;
                     // flag triggered back tracking
                     if (_board[row, col].Conf == 5)
                     {
                         AlterCell(row, col, 'k', 10);
-                        return BoxBruteForceSolver(index, false);
+                        return BoxBruteForceSolver(index, whichList, false);
                     }
                     else
                     {
                         if (index > 0)
                         {
                             index = index - 1;
-                            return BoxBruteForceSolver(index, true);
+                            return BoxBruteForceSolver(index, whichList, true);
                         }
                         else
                             return false; // if here that means this problem is NOT solveable somehow come up with a flag for this
@@ -667,7 +760,6 @@ namespace ConsoleSudoku
         public int MoveCounter = 0;
         public int PotentialMoves;
         public int BacktrackCounter;
-        List<Coord> coords;
-        
+        List<List<Coord>> List_Coords;
     }
 }
