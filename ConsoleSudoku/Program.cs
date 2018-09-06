@@ -11,11 +11,10 @@ namespace ConsoleSudoku
         {
             Stopwatch clock1 = new Stopwatch();
             double mill = 0;
+            // ------------------------------------------------------------ //
+            // Easy 1
             mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_1.txt", 0);
-
             mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_1.txt", 1);
-
-
             mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_1.txt", 2);
             mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_1.txt", 3);
             mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_1.txt", 4);
@@ -24,7 +23,19 @@ namespace ConsoleSudoku
             mill = CallTimer(clock1, mill, 8000000, "sudoku_input_easy_1.txt", 7);
 
             // ------------------------------------------------------------ //
-            
+            // ------------------------------------------------------------ //
+            // Easy 1
+            mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_2.txt", 0);
+            mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_2.txt", 1);
+            mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_2.txt", 2);
+            mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_2.txt", 3);
+            mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_2.txt", 4);
+            mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_2.txt", 5);
+            mill = CallTimer(clock1, mill, 2048, "sudoku_input_easy_2.txt", 6);
+            mill = CallTimer(clock1, mill, 800000, "sudoku_input_easy_2.txt", 7);
+
+            // ------------------------------------------------------------ //
+
             Console.WriteLine("At the end of the project, press enter to continue.");
             Console.ReadKey();
         }
@@ -45,7 +56,7 @@ namespace ConsoleSudoku
         public static double CallTimer(Stopwatch timer, double totalMilliseconds, int stackSize, string filename, int which)
         {
             Console.WriteLine("-----------------------------------------------------------------------------------------------------");
-            Console.WriteLine("Using the list guided brute force with route " + which);
+            Console.WriteLine("Using the list guided brute force with route " + which +" on "+ filename);
             timer.Start();
 
             Thread Brute = new Thread(Program.BoxBruteForceSolve, stackSize);
@@ -58,6 +69,7 @@ namespace ConsoleSudoku
             Console.WriteLine("-----------------------------------------------------------------------------------------------------");
             Console.WriteLine();
             totalMilliseconds = timer.Elapsed.TotalMilliseconds;
+            game_board = null;
             return totalMilliseconds;
         }
         

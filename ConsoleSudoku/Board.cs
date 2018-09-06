@@ -406,13 +406,10 @@ namespace ConsoleSudoku
         {
             _board[x, y].Val = a;
             _board[x, y].Conf = c;
-            MoveCounter = MoveCounter + 1;
-            //if (MoveCounter>500000)
-            //{
-                //Console.WriteLine("Cell Alteration. "+MoveCounter+" [" + x + ", " + y + "]: " + a);
-                //PrintBoard();
-                //Console.WriteLine();
-           // }/
+            if (true)
+            {
+                MoveCounter = MoveCounter + 1;
+            }
 
             if (a == 'k') { BacktrackCounter = BacktrackCounter + 1; }
             //addPrevious();
@@ -585,7 +582,7 @@ namespace ConsoleSudoku
         List<Statistic> statistics = new List<Statistic>();
         public void DisplayStatistics(int whichList)
         {
-            Statistic stat = new Statistic(whichList, MoveCounter, PotentialMoves, BacktrackCounter);
+            Statistic stat = new Statistic(whichList, PotentialMoves, MoveCounter, BacktrackCounter);
             statistics.Add(stat);
             Console.Write(stat);
         }
